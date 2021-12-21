@@ -27,13 +27,13 @@ while end != True:
     while zeile_ausgabe < 6:
         print(spielfeld[zeile_ausgabe])
         zeile_ausgabe += 1
-
-    beenden = input("Wollen Sie das Spiel beenden?")
+    win = "Niemand"
+    beenden = str(input("Wollen Sie das Spiel beenden?"))
     if beenden == "Ja" or beenden == "J" or beenden == "j" or beenden == "ja" or beenden == "yes" or beenden == "Yes" or beenden == "y" or beenden == "Y":
         break
 
     eingabe = int(input("Bitte wählen Sie eine Spalte für den nächsten Spielzug aus (1-7)"))
-    if 1 <= eingabe <= 7:
+    if 1 <= eingabe <= 7 and spielfeld[0][eingabe-1] == 0:
         for reihe in spielfeld[::-1]:
             if reihe[eingabe - 1] == 0:
                 reihe[eingabe - 1] = spieler
@@ -41,7 +41,7 @@ while end != True:
     else:
         print("Fehler, falsche Eingabe")
         fehler = True
-    if fehler == False:
+    if fehler == False or spielfeld[0][eingabe-1] == 0:
         if spieler == 1:
             spieler -= 2
         else:
@@ -69,22 +69,103 @@ while end != True:
             elif spalte == -1 and vorige_spalte_spieler2 == True:
                 condition_spieler_2 += 1
 
-        # Vertikales Abfragen des Gewinns
+        # Vertikales Abfragen des Gewinns für Spieler 1
         condition_spieler_1_vertikal = 0
         condition_spieler_2_vertikal = 0
-        vorige_zeile_spieler1 = False
-        vorige_zeile_spieler2 = False
-        for spalte in reihe:
-            if spalte != 1:
-                vorige_zeile_spieler1
+        spaltenzahl = 0
+        while spaltenzahl <= 7:
+            if spielfeld[len(spielfeld)-1-condition_spieler_1_vertikal][spaltenzahl-1] == 1:
+                condition_spieler_1_vertikal += 1
+                if condition_spieler_1_vertikal >= 4:
+                    end = True
+                    win = "Spieler 1"
+            else:
+                condition_spieler_1_vertikal = 0
+                spaltenzahl += 1
+            if end:
+                break
 
+        # Vertikales Abfragen für Spieler 2
+        spaltenzahl = 0
+        while spaltenzahl <= 7:
+            if spielfeld[len(spielfeld)-1-condition_spieler_2_vertikal][spaltenzahl-1] == -1:
+                condition_spieler_2_vertikal += 1
+                if condition_spieler_2_vertikal >= 4:
+                    end = True
+                    win = "Spieler 2"
+            else:
+                condition_spieler_2_vertikal = 0
+                spaltenzahl += 1
+            if end:
+                break
+
+
+        # diagonal nach rechts abfragen des Gewinns für Spieler 1
+        condition_spieler_1_diagonal = 0
+        condition_spieler_2_diagonal = 0
+        spaltenzahl = 0
+        while spaltenzahl <= 7:
+            if spielfeld[len(spielfeld)-1-condition_spieler_1_diagonal][spaltenzahl-1] == 1:
+                condition_spieler_1_diagonal += 1
+                if condition_spieler_1_diagonal >= 4:
+                    end = True
+                    win = "Spieler 1"
+            else:
+                condition_spieler_1_diagonal = 0
+            spaltenzahl += 1
+            if end:
+                break
+
+        # diagonal nach rechts abfragen für spieler 2
+        spaltenzahl = 0
+
+        while spaltenzahl <= 7:
+            if spielfeld[len(spielfeld) - 1 - condition_spieler_2_diagonal][spaltenzahl - 1] == -1:
+                condition_spieler_2_diagonal += 1
+                if condition_spieler_2_diagonal >= 4:
+                    end = True
+                    win = "Spieler 2"
+            else:
+                condition_spieler_2_diagonal = 0
+            spaltenzahl += 1
+            if end:
+                break
+        spaltenzahl = 7
+
+        # diagonal nach links abfragen für Spieler 1
+        while spaltenzahl >= 0:
+            if spielfeld[len(spielfeld)-1-condition_spieler_1_diagonal][spaltenzahl-1] == 1:
+                condition_spieler_1_diagonal += 1
+                if condition_spieler_1_diagonal >= 4:
+                    end = True
+                    win = "Spieler 1"
+            else:
+                condition_spieler_1_diagonal = 0
+            spaltenzahl -= 1
+            if end:
+                break
+        spaltenzahl = 7
+        # diagonal nach links abfragen für Spieler 2
+        while spaltenzahl >= 0:
+            if spielfeld[len(spielfeld) - 1 - condition_spieler_2_diagonal][spaltenzahl - 1] == -1:
+                condition_spieler_2_diagonal += 1
+                if condition_spieler_2_diagonal >= 4:
+                    end = True
+                    win = "Spieler 2"
+            else:
+                condition_spieler_2_diagonal = 0
+            spaltenzahl -= 1
+            if end:
+                break
 
         if condition_spieler_1 >= 4:
             end = True
-            print("Spieler 1 hat gewonnen")
+            win = "Spieler 1"
         if condition_spieler_2 >= 4:
             end = True
-            print("Spieler 2 hat gewonnen")
+            win = "Spieler 2"
 
 
+
+print(f'{win} hat gewonnen!')
 print("Danke für's Spielen!!")
