@@ -1,3 +1,5 @@
+import random, time
+
 zeile1 = [0, 0, 0, 0, 0, 0, 0]
 zeile2 = [0, 0, 0, 0, 0, 0, 0]
 zeile3 = [0, 0, 0, 0, 0, 0, 0]
@@ -9,9 +11,10 @@ spielfeld = [zeile1, zeile2, zeile3, zeile4, zeile5, zeile6]
 
 
 print("Willkommen im Spiel '4 gewinnt'! Sie haben die Auswahl gegen einen Mensch oder eine künstliche Intelligenz zu spielen.")
-# if input("Möchten Sie gegen eine künstliche Intelligenz spielen?") == "Ja":
-#     print("richtig")
-#     pass
+ki_abfrage = input("Möchten Sie gegen eine künstliche Intelligenz spielen?")
+ki = False
+if ki_abfrage == "Ja" or ki_abfrage == "J" or ki_abfrage == "j" or ki_abfrage == "ja" or ki_abfrage == "yes" or ki_abfrage == "Yes" or ki_abfrage == "y" or ki_abfrage == "Y":
+    ki = True
 
 spieler = 1
 runden_zaehler = 0
@@ -24,28 +27,46 @@ while end != True:
         print(spielfeld[zeile_ausgabe])
         zeile_ausgabe += 1
     win = "Niemand"
-    beenden = str(input("Wollen Sie das Spiel beenden?"))
-    if beenden == "Ja" or beenden == "J" or beenden == "j" or beenden == "ja" or beenden == "yes" or beenden == "Yes" or beenden == "y" or beenden == "Y":
-        break
-    if spieler == 1:
-        print("Spieler 1 ist dran")
-    if spieler == -1:
-        print("Spieler 2 ist dran")
-    eingabe = int(input("Bitte wählen Sie eine Spalte für den nächsten Spielzug aus (1-7)"))
-
-    if 1 <= eingabe <= 7 and spielfeld[0][eingabe-1] == 0:
-        for reihe in spielfeld[::-1]:
-            if reihe[eingabe - 1] == 0:
-                reihe[eingabe - 1] = spieler
-                break
-    else:
-        print("Fehler, falsche Eingabe")
-        fehler = True
-    if fehler == False or spielfeld[0][eingabe-1] == 0:
+    if (ki and spieler == 1) or ki == False:
+        beenden = str(input("Wollen Sie das Spiel beenden?"))
+        if beenden == "Ja" or beenden == "J" or beenden == "j" or beenden == "ja" or beenden == "yes" or beenden == "Yes" or beenden == "y" or beenden == "Y":
+            break
         if spieler == 1:
-            spieler -= 2
+            print("Spieler 1 ist dran")
+        if spieler == -1:
+            print("Spieler 2 ist dran")
+    if ki == True and spieler == -1:
+        time.sleep(1.5)
+        random_number = random.randint(1, 7)
+        if 1 <= random_number <= 7 and spielfeld[0][random_number-1] == 0:
+            for reihe in spielfeld[::-1]:
+                if reihe[random_number - 1] == 0:
+                    reihe[random_number - 1] = spieler
+                    break
+            print(f'Die KI hat in der Spalte {random_number} gespielt')
         else:
-            spieler += 2
+            fehler = True
+        if fehler == False or spielfeld[0][random_number - 1] == 0:
+            if spieler == 1:
+                spieler -= 2
+            else:
+                spieler += 2
+    else:
+        eingabe = int(input("Bitte wählen Sie eine Spalte für den nächsten Spielzug aus (1-7)"))
+        if 1 <= eingabe <= 7 and spielfeld[0][eingabe-1] == 0:
+            for reihe in spielfeld[::-1]:
+                if reihe[eingabe - 1] == 0:
+                    reihe[eingabe - 1] = spieler
+                    break
+        else:
+            print("Fehler, falsche Eingabe")
+            fehler = True
+        if fehler == False or spielfeld[0][eingabe-1] == 0:
+            if spieler == 1:
+                spieler -= 2
+            else:
+                spieler += 2
+
 
     # Horizontales abfragen des Gewinns
     for reihe in spielfeld[::-1]:
@@ -77,38 +98,46 @@ while end != True:
 
         # Vertikales Abfragen des Gewinns
     condition_vertikal = 0
-    spaltenzahl = 0
-    zeilenzahl = 0
-    while zeilenzahl <= 7:
-        if spieler == 1:
-            if spielfeld[len(spielfeld)-1-zeilenzahl][spaltenzahl] == spieler - 2:
-                win = "Spieler 2"
-                condition_vertikal += 1
-                if condition_vertikal >= 4:
-                    end = True
-            else:
-                if zeilenzahl == 7:
-                    spaltenzahl += 1
-                    if spaltenzahl != 7:
-                        zeilenzahl = -1
-                condition_vertikal = 0
-        if spieler == -1:
-            if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
-                win = "Spieler 1"
-                condition_vertikal += 1
-                if condition_vertikal >= 4:
-                    end = True
-            else:
-                if zeilenzahl == 7:
-                    spaltenzahl += 1
-                    if spaltenzahl != 7:
-                        zeilenzahl = -1
-                condition_vertikal = 0
-        if end:
-            break
-        else:
-            win = "Niemand"
-        zeilenzahl += 1
+    runde_spalte = 0
+    while runde_spalte <= 6:
+        runde_zeile = 0
+        while runde_zeile <= 5:
+            spaltenzahl = 0 + runde_spalte
+            zeilenzahl = 0 + runde_zeile
+            while zeilenzahl <= 5:
+                if spieler == 1:
+                    if spielfeld[len(spielfeld)-1-zeilenzahl][spaltenzahl] == spieler - 2:
+                        win = "Spieler 2"
+                        condition_vertikal += 1
+                        if condition_vertikal >= 4:
+                            end = True
+                    else:
+                        if zeilenzahl == 7:
+                            spaltenzahl += 1
+                            if spaltenzahl != 7:
+                                zeilenzahl = -1
+                        condition_vertikal = 0
+                if spieler == -1:
+                    if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
+                        win = "Spieler 1"
+                        condition_vertikal += 1
+                        if condition_vertikal >= 4:
+                            end = True
+                            print("Es ist Condition Vertikal Spieler 1")
+                    else:
+                        if zeilenzahl == 7:
+                            spaltenzahl += 1
+                            if spaltenzahl != 7:
+                                zeilenzahl = -1
+                        condition_vertikal = 0
+                if end:
+                    break
+                else:
+                    win = "Niemand"
+                zeilenzahl += 1
+            condition_vertikal = 0
+            runde_zeile += 1
+        runde_spalte += 1
 
 
     # diagonal nach rechts abfragen des Gewinns
