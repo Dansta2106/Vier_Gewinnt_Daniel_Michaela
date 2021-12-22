@@ -18,14 +18,15 @@ if ki_abfrage == "Ja" or ki_abfrage == "J" or ki_abfrage == "j" or ki_abfrage ==
 
 spieler = 1
 runden_zaehler = 0
-
+fehler = False
 end = False
 while end != True:
-    fehler = False
     zeile_ausgabe = 0
-    while zeile_ausgabe < 6:
-        print(spielfeld[zeile_ausgabe])
-        zeile_ausgabe += 1
+    if (ki and fehler == False) or ki == False:
+        while zeile_ausgabe < 6:
+            print(spielfeld[zeile_ausgabe])
+            zeile_ausgabe += 1
+    fehler = False
     win = "Niemand"
     if (ki and spieler == 1) or ki == False:
         beenden = str(input("Wollen Sie das Spiel beenden?"))
