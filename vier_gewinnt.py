@@ -16,6 +16,7 @@ ki = False
 if ki_abfrage == "Ja" or ki_abfrage == "J" or ki_abfrage == "j" or ki_abfrage == "ja" or ki_abfrage == "yes" or ki_abfrage == "Yes" or ki_abfrage == "y" or ki_abfrage == "Y":
     ki = True
 
+eingabe = 0
 spieler = 1
 runden_zaehler = 0
 fehler = False
@@ -53,16 +54,22 @@ while end != True:
             else:
                 spieler += 2
     else:
-        eingabe = int(input("Bitte wählen Sie eine Spalte für den nächsten Spielzug aus (1-7)"))
-        if 1 <= eingabe <= 7 and spielfeld[0][eingabe-1] == 0:
-            for reihe in spielfeld[::-1]:
-                if reihe[eingabe - 1] == 0:
-                    reihe[eingabe - 1] = spieler
-                    break
-        else:
+        eingabe_start = input("Bitte wählen Sie eine Spalte für den nächsten Spielzug aus (1-7)")
+        try:
+            eingabe = int(eingabe_start)
+            if 1 <= eingabe <= 7 and spielfeld[0][eingabe - 1] == 0:
+                for reihe in spielfeld[::-1]:
+                    if reihe[eingabe - 1] == 0:
+                        reihe[eingabe - 1] = spieler
+                        break
+            else:
+                print("Fehler, falsche Eingabe")
+                fehler = True
+        except ValueError:
             print("Fehler, falsche Eingabe")
             fehler = True
-        if fehler == False or spielfeld[0][eingabe-1] == 0:
+
+        if fehler == False and spielfeld[0][eingabe-1] == 0:
             if spieler == 1:
                 spieler -= 2
             else:
