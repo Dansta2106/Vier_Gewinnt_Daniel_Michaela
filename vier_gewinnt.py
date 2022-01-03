@@ -34,7 +34,10 @@ while end != True:
         if beenden == "Ja" or beenden == "J" or beenden == "j" or beenden == "ja" or beenden == "yes" or beenden == "Yes" or beenden == "y" or beenden == "Y":
             break
         if spieler == 1:
-            print("Spieler 1 ist dran")
+            if ki:
+                print("Sie sind dran")
+            else:
+                print("Spieler 1 ist dran")
         if spieler == -1:
             print("Spieler 2 ist dran")
     if ki == True and spieler == -1:
@@ -48,7 +51,7 @@ while end != True:
             print(f'Die KI hat in der Spalte {random_number} gespielt')
         else:
             fehler = True
-        if fehler == False or spielfeld[0][random_number - 1] == 0:
+        if fehler == False:
             if spieler == 1:
                 spieler -= 2
             else:
@@ -69,7 +72,7 @@ while end != True:
             print("Fehler, falsche Eingabe")
             fehler = True
 
-        if fehler == False and spielfeld[0][eingabe-1] == 0:
+        if fehler == False or spielfeld[0][eingabe-1] == 0:
             if spieler == 1:
                 spieler -= 2
             else:
@@ -77,38 +80,38 @@ while end != True:
 
 
     # Horizontales abfragen des Gewinns
-    for reihe in spielfeld[::-1]:
-        condition_spieler_1 = 0
-        condition_spieler_2 = 0
-        vorige_spalte_spieler1 = False
-        vorige_spalte_spieler2 = False
-        for spalte in reihe:
-            if spalte != 1:
-                vorige_spalte_spieler1 = False
-            if spalte == 1 and vorige_spalte_spieler1 != True:
-                vorige_spalte_spieler1 = True
-                condition_spieler_1 = 1
-            elif spalte == 1 and vorige_spalte_spieler1 == True:
-                condition_spieler_1 += 1
-            if spalte != -1:
-                vorige_spalte_spieler2 = False
-            if spalte == -1 and vorige_spalte_spieler2 != True:
-                vorige_spalte_spieler2 = True
-                condition_spieler_2 = 1
-            elif spalte == -1 and vorige_spalte_spieler2 == True:
-                condition_spieler_2 += 1
-        if condition_spieler_1 >= 4:
-            end = True
-            win = "Spieler 1"
-        if condition_spieler_2 >= 4:
-            end = True
-            win = "Spieler 2"
+    zeilenzahl = 0
+    while zeilenzahl <= 5:
+        condition_horizontal = 0
+        spaltenzahl = 0
+        while spaltenzahl <= 6:
+            if spieler == 1:
+                if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
+                    win = "Spieler 2"
+                    condition_horizontal += 1
+                    if condition_horizontal >= 4:
+                        end = True
+                        break
+                else:
+                    condition_horizontal = 0
+            if spieler == -1:
+                if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
+                    win = "Spieler 1"
+                    condition_horizontal += 1
+                    if condition_horizontal >= 4:
+                        end = True
+                        break
+                else:
+                    condition_horizontal = 0
+            spaltenzahl += 1
+        zeilenzahl += 1
 
         # Vertikales Abfragen des Gewinns
     condition_vertikal = 0
     runde_spalte = 0
     while runde_spalte <= 6:
         runde_zeile = 0
+        condition_vertikal = 0
         while runde_zeile <= 5:
             spaltenzahl = 0 + runde_spalte
             zeilenzahl = 0 + runde_zeile
@@ -155,6 +158,7 @@ while end != True:
     runde_zeile = 0
     while runde_zeile <= 6:
         runde_spalte = 0
+        condition_diagonal_rechts = 0
         while runde_spalte <= 5:
             spaltenzahl = runde_spalte + 0
             zeilenzahl = runde_zeile + 0
@@ -175,6 +179,7 @@ while end != True:
                         condition_diagonal_rechts += 1
                         if condition_diagonal_rechts >= 4:
                             end = True
+                            print("Es ist condition diagonal rechts")
                     else:
                         if spaltenzahl == 7:
                             break
@@ -195,10 +200,13 @@ while end != True:
     runde_zeile = 0
     while runde_zeile <= 6:
         runde_spalte = 0
+        condition_diagonal_links = 0
         while runde_spalte <= 5:
             spaltenzahl = 6 - runde_spalte
             zeilenzahl = 0 + runde_zeile
             while zeilenzahl <= 5:
+                if spaltenzahl < 0:
+                    spaltenzahl = 0
                 if spieler == 1:
                     if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
                         win = "Spieler 2"
@@ -216,6 +224,7 @@ while end != True:
                         condition_diagonal_links += 1
                         if condition_diagonal_links >= 4:
                             end = True
+                            print("Es ist condition diagonal links")
                     else:
                         if spaltenzahl == 0:
                             break
@@ -236,6 +245,9 @@ while end != True:
     if runden_zaehler == 42 and win == 'Niemand':
         end = True
         win = "Unentschieden, niemand"
+
+if ki and win == "Spieler 2":
+    win = "Die KI"
 
 
 zeile_ausgabe = 0
