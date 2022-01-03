@@ -134,7 +134,6 @@ while end != True:
                         condition_vertikal += 1
                         if condition_vertikal >= 4:
                             end = True
-                            print("Es ist Condition Vertikal Spieler 1")
                     else:
                         if zeilenzahl == 7:
                             spaltenzahl += 1
@@ -179,7 +178,6 @@ while end != True:
                         condition_diagonal_rechts += 1
                         if condition_diagonal_rechts >= 4:
                             end = True
-                            print("Es ist condition diagonal rechts")
                     else:
                         if spaltenzahl == 7:
                             break
@@ -212,7 +210,6 @@ while end != True:
                         win = "Spieler 2"
                         condition_diagonal_links += 1
                         if condition_diagonal_links >= 4:
-                            print(f'{zeilenzahl}, {spaltenzahl}')
                             end = True
                     else:
                         if spaltenzahl == 0:
@@ -224,7 +221,6 @@ while end != True:
                         condition_diagonal_links += 1
                         if condition_diagonal_links >= 4:
                             end = True
-                            print("Es ist condition diagonal links")
                     else:
                         if spaltenzahl == 0:
                             break
