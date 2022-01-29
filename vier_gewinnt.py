@@ -26,6 +26,7 @@ class Spieler():
             spieler -= 2
         else:
             spieler += 2
+        return spieler
 
     def spielerAusgabe(self):
         if spieler == 1:
