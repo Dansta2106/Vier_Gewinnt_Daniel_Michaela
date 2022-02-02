@@ -25,12 +25,13 @@ class Spieler():
     def spielerWechsel(self):
         """ Spieler wird gewechselt
 
-        Die globale Variable Spieler (1 oder -1) wird gewechselt.
+        Diese Methode setzt die globale Variable Spieler auf 1 oder -1
+        und bestimmt dadurch, welcher Spieler am Zug ist.
 
         Returns
         -------
         int
-            Zahl, welche -1 oder 1 sein kann
+            Zahl des Spielers, welche -1 oder 1 sein kann
         """
         global spieler
         if spieler == 1:
@@ -43,12 +44,7 @@ class Spieler():
         """ Aktueller Spieler wird ausgegeben
 
         Diese Methode gibt den aktuellen Spieler
-        am Bildschirm wieder.
-
-        Returns
-        -------
-        str
-            Gibt einen string aus, um den aktuellen Spieler anzuzeigen
+        am Bildschirm aus.
         """
         if spieler == 1:
             if ki:
@@ -94,7 +90,7 @@ class Spielfeld(Spieler):
     def printSpielfeld(self):
         """ Gibt Spielfeld aus
 
-        Diese Methode zeigt dem Spieler das aktuelles Spielbrett
+        Diese Methode zeigt dem Spieler das aktuelles Spielfeld
         und gibt es am Bildschirm aus.
         """
         zeile_ausgabe = 0
@@ -108,8 +104,11 @@ class KI(Spielfeld):
 
     def kiAbfrage(self, ki_abfrage: str):
         """ KI als Gegner auswählen
-        Diese Methode setzt die globale Variable 'ki' auf True
-        oder der Initialwert False bleibt bestehen.
+
+        Diese Methode fragt mittels Texteingabe ab, ob gegen die KI
+        gespielt werden soll. Falls die KI zum Gegenspieler wird, wird
+        die globale Variable 'ki' auf True gesetzt. Falls nicht gegen
+        die KI gespielt wird, bleibt der Initialwert auf False.
 
         Parameters
         ----------
@@ -126,17 +125,14 @@ class KI(Spielfeld):
         """ Die KI tätigt einen Zug
 
         Diese Methode erezeugt eine Zufallszahl zwischen 1 und 7
-        und setzt diese auf einen den Spielregeln entsprechenden
+        und setzt diese auf einen den Spielregeln entsprechend
         gültigen Platz in der Spalte.
 
         Parameters
         ----------
-
-        sleep
-
-        Returns
-        -------
-
+        sleep : float
+            Dieser Parameter verzögert den Zug der KI um 1.5 Sekunden,
+            um den Anschein zu erwecken, dass diese 'nachdenkt'
         """
         if ki and spieler == -1:
             time.sleep(sleep)
@@ -152,6 +148,10 @@ class KI(Spielfeld):
 class Gewinnabfrage(KI):
 
     def erhoeheRunde(self):
+        """ Rundenzähler
+
+        Diese Methode zählt die Anzahl der Runden mit.
+        """
         global runden_zaehler
         runden_zaehler += 1
         return runden_zaehler
@@ -164,7 +164,8 @@ class Gewinnabfrage(KI):
 
         Returns
         -------
-
+        condition_horizontal : int
+            zählt die Anzahl der gleichen Spielerwerte nebeneinander mit
         """
         global spieler
         global end
@@ -202,6 +203,16 @@ class Gewinnabfrage(KI):
         return condition_horizontal
 
     def vertikaleAbfrage(self):
+        """ Vertikale Gewinnabfrage
+
+        Diese Methode überprüft, ob vier Werte des gleichen Spielers in
+        derselben Spalte direkt übereinander liegen.
+
+        Returns
+        -------
+        condition_vertikal : int
+            zählt die Anzahl der gleichen Spielerwerte übereinander mit
+        """
         global end
         global spieler
         global win
@@ -251,6 +262,17 @@ class Gewinnabfrage(KI):
         return condition_vertikal
 
     def diagonalRechtsAbfrage(self):
+        """ Gewinnabfrage diagonal rechts
+
+        Diese Methode überprüft, ob vier Werte des gleichen Spielers
+        diagonal nach rechts direkt aneinanderliegen.
+
+        Returns
+        -------
+        condition_diagonal_rechts : int
+            zählt die Anzahl der gleichen Spielerwerte diagonal nach rechts
+            mit
+        """
         condition_diagonal_rechts = 0
         runde_zeile = 0
         global end
@@ -299,6 +321,17 @@ class Gewinnabfrage(KI):
         return condition_diagonal_rechts
 
     def diagonalLinksAbfrage(self):
+        """ Gewinnabfrage diagonal links
+
+        Diese Methode überprüft, ob vier Werte des gleichen Spielers
+        diagonal nach links direkt aneinanderliegen.
+
+        Returns
+        -------
+        condition_diagonal_links : int
+            zählt die Anzahl der gleichen Spielerwerte diagonal nach
+            links mit
+        """
         global end
         global spieler
         global win
@@ -349,6 +382,12 @@ class Gewinnabfrage(KI):
 class Spielablauf(Gewinnabfrage):
 
     def spielRunden(self):
+        """ Spielablauf
+
+        Diese Methode erzeugt den Spielablauf und ruft die Gewinnabfragen
+        auf. Bei einem Sieg wird am Bildschirm ausgegeben, wer gewonnen
+        hat. Ein Unentschieden wird auch berücksichtigt.
+        """
         global end
         global win
         global pseudo_runde
