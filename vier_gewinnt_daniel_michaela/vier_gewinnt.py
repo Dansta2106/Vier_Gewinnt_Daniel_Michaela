@@ -19,6 +19,7 @@ fehler = False
 ki = False
 pseudo_runde = 0
 
+# Test
 
 class Spieler():
 
