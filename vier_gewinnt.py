@@ -26,16 +26,19 @@ class Spieler():
             spieler -= 2
         else:
             spieler += 2
+        return spieler
 
     def spielerAusgabe(self):
+        message = "Niemand"
         if spieler == 1:
             if ki:
-                print("Sie sind dran")
+                message = "Sie sind dran"
             else:
-                print("Spieler 1 ist dran")
+                message = "Spieler 1 ist dran"
         if spieler == -1:
-            print("Spieler 2 ist dran")
-        return spieler
+            message = "Spieler 2 ist dran"
+        print(message)
+        return message
 
 
 class Spielfeld(Spieler):
