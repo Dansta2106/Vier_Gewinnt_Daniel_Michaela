@@ -16,10 +16,10 @@ Alle Iterator-Objekte müssen dieselbe Schnittstelle implementieren. Dadurch wir
 Das Iterator-Muster kann verwendet werden, wenn durch die Sammlung der Objekte eine komplexe Datenstruktur gegeben ist, man die Komplexität vor Clients jedoch verbergen möchte (zB.: aus Bequemlichkeits- oder Sicherheitsgründen).
 
 ## Pro und Kontra
-•	Der Code und die Sammlungen können bereinigt werden, indem umfangreiche Durchlaufalgorithmen in separate Klassen extrahiert werden.
-•	Neue Arten von Sammlungen und Iteratoren können implementiert und an vorhandenen Code übergeben werden, ohne etwas zu beschädigen.
-•	 Dieselbe Sammlung kann parallel durchlaufen werden, da jedes Iterator-Objekt seinen eigenen Iterationszustand enthält.
-•	 Dadurch kann eine Iteration verzögert und bei Bedarf fortgesetzt werden.
+<p> •	Der Code und die Sammlungen können bereinigt werden, indem umfangreiche Durchlaufalgorithmen in separate Klassen extrahiert werden.</p>
+<p> •	Neue Arten von Sammlungen und Iteratoren können implementiert und an vorhandenen Code übergeben werden, ohne etwas zu beschädigen.</p>
+<p> •	 Dieselbe Sammlung kann parallel durchlaufen werden, da jedes Iterator-Objekt seinen eigenen Iterationszustand enthält.</p>
+<p> •	 Dadurch kann eine Iteration verzögert und bei Bedarf fortgesetzt werden.</p>
 
-•	Das Anwenden des Musters kann den Code bei einfachen Sammlungen überfordern.
-•	Die Verwendung eines Iterators ist möglicherweise weniger effizient als das direkte Durchlaufen von Elementen.
+<p> •	Das Anwenden des Musters kann den Code bei einfachen Sammlungen überfordern.</p>
+<p> •	Die Verwendung eines Iterators ist möglicherweise weniger effizient als das direkte Durchlaufen von Elementen.</p>
