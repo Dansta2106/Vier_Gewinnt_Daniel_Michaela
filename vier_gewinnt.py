@@ -1,5 +1,6 @@
 import random, time
 
+# Spielfeld wird als Listen in Listen erstellt
 zeile1 = [0, 0, 0, 0, 0, 0, 0]
 zeile2 = [0, 0, 0, 0, 0, 0, 0]
 zeile3 = [0, 0, 0, 0, 0, 0, 0]
@@ -7,6 +8,7 @@ zeile4 = [0, 0, 0, 0, 0, 0, 0]
 zeile5 = [0, 0, 0, 0, 0, 0, 0]
 zeile6 = [0, 0, 0, 0, 0, 0, 0]
 
+# Das Spielfeld besteht aus 6 Zeilen und 7 Spalten
 spielfeld = [zeile1, zeile2, zeile3, zeile4, zeile5, zeile6]
 
 spieler = 1
@@ -21,6 +23,16 @@ pseudo_runde = 0
 class Spieler():
 
     def spielerWechsel(self):
+        """ Spieler wird gewechselt
+
+        Diese Methode setzt die globale Variable Spieler auf 1 oder -1
+        und bestimmt dadurch, welcher Spieler am Zug ist.
+
+        Returns
+        -------
+        int
+            Zahl des Spielers, welche -1 oder 1 sein kann
+        """
         global spieler
         if spieler == 1:
             spieler -= 2
@@ -30,6 +42,11 @@ class Spieler():
 
     def spielerAusgabe(self):
         message = "Niemand"
+        """ Aktueller Spieler wird ausgegeben
+
+        Diese Methode gibt den aktuellen Spieler
+        am Bildschirm aus.
+        """
         if spieler == 1:
             if ki:
                 message = "Sie sind dran"
@@ -43,17 +60,25 @@ class Spieler():
 
 class Spielfeld(Spieler):
 
-    def getSpielfeld(self):
-        return spielfeld
+    def setSpielfeld(self, eingabe_start: str):
+        """ Das Spielfeld wird mit Spielzügen erweitert
 
+        Diese Methode überprüft die Korrektheit der Eingabe
+        und ändert den untersten nicht besetzten Wert in der
+        eingegebenen Spalte in den Wert des aktuellen Spielers.
+        Gibt bei falscher Eingabe einen Fehlertext aus.
 
-    def setSpielfeld(self):
+        Parameters
+        ----------
+        eingabe_start : str
+            Spielerwert wird in Spalte 'eingabe_start' gesetzt
+        """
         global fehler
-        eingabe_start = input("Bitte wählen Sie eine Spalte für den nächsten Spielzug aus (1-7)")
+        global spielfeld
         try:
             eingabe = int(eingabe_start)
-            if 1 <= eingabe <= 7 and Spielfeld().getSpielfeld()[0][eingabe - 1] == 0:
-                for reihe in Spielfeld().getSpielfeld()[::-1]:
+            if 1 <= eingabe <= 7 and spielfeld[0][eingabe - 1] == 0:
+                for reihe in spielfeld[::-1]:
                     if reihe[eingabe - 1] == 0:
                         reihe[eingabe - 1] = spieler
                         break
@@ -63,9 +88,14 @@ class Spielfeld(Spieler):
         except ValueError:
             print("Fehler, falsche Eingabe")
             fehler = True
-            self.spielerWechsel()
+            Spieler().spielerWechsel()
 
     def printSpielfeld(self):
+        """ Gibt Spielfeld aus
+
+        Diese Methode zeigt dem Spieler das aktuelles Spielfeld
+        und gibt es am Bildschirm aus.
+        """
         zeile_ausgabe = 0
         if (ki and spieler == 1 and fehler == False) or ki == False:
             while zeile_ausgabe < 6:
@@ -75,15 +105,40 @@ class Spielfeld(Spieler):
 
 class KI(Spielfeld):
 
-    def kiAbfrage(self):
+    def kiAbfrage(self, ki_abfrage: str):
+        """ KI als Gegner auswählen
+
+        Diese Methode fragt mittels Texteingabe ab, ob gegen die KI
+        gespielt werden soll. Falls die KI zum Gegenspieler wird, wird
+        die globale Variable 'ki' auf True gesetzt. Falls nicht gegen
+        die KI gespielt wird, bleibt der Initialwert auf False.
+
+        Parameters
+        ----------
+        ki_abfrage : str
+            'ki_abfrage' wird auf unterschiedliche Schreibweisen
+            des Wortes 'ja' überprüft
+        """
         global ki
-        ki_abfrage = input("Möchten Sie gegen eine künstliche Intelligenz spielen?")
+
         if ki_abfrage == "Ja" or ki_abfrage == "J" or ki_abfrage == "j" or ki_abfrage == "ja" or ki_abfrage == "yes" or ki_abfrage == "Yes" or ki_abfrage == "y" or ki_abfrage == "Y":
             ki = True
 
-    def kiZug(self):
-        if ki == True and spieler == -1:
-            time.sleep(1.5)
+    def kiZug(self, sleep: float):
+        """ Die KI tätigt einen Zug
+
+        Diese Methode erezeugt eine Zufallszahl zwischen 1 und 7
+        und setzt diese auf einen den Spielregeln entsprechend
+        gültigen Platz in der Spalte.
+
+        Parameters
+        ----------
+        sleep : float
+            Dieser Parameter verzögert den Zug der KI um 1.5 Sekunden,
+            um den Anschein zu erwecken, dass diese 'nachdenkt'
+        """
+        if ki and spieler == -1:
+            time.sleep(sleep)
             random_number = random.randint(1, 7)
             if 1 <= random_number <= 7 and spielfeld[0][random_number - 1] == 0:
                 for reihe in spielfeld[::-1]:
@@ -95,21 +150,30 @@ class KI(Spielfeld):
 
 class Gewinnabfrage(KI):
 
-    def getWin(self):
-        return win
-
     def erhoeheRunde(self):
+        """ Rundenzähler
+
+        Diese Methode zählt die Anzahl der Runden mit.
+        """
         global runden_zaehler
         runden_zaehler += 1
         return runden_zaehler
 
-    def getRunde(self):
-        return runden_zaehler
-
     def horizontaleAbfrage(self):
+        """ Horizontale Gewinnabfrage
+
+        Diese Methode überprüft, ob vier Werte des gleichen Spielers in
+        derselben Zeile direkt nebeneinander liegen.
+
+        Returns
+        -------
+        condition_horizontal : int
+            zählt die Anzahl der gleichen Spielerwerte nebeneinander mit
+        """
         global spieler
         global end
         global win
+        global spielfeld
         condition_horizontal = 0
         zeilenzahl = 0
         while zeilenzahl <= 5:
@@ -117,7 +181,7 @@ class Gewinnabfrage(KI):
             spaltenzahl = 0
             while spaltenzahl <= 6:
                 if spieler == 1:
-                    if Spielfeld().getSpielfeld()[len(Spielfeld().getSpielfeld()) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
+                    if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
                         win = "Spieler 2"
                         condition_horizontal += 1
                         if condition_horizontal >= 4:
@@ -126,7 +190,7 @@ class Gewinnabfrage(KI):
                     else:
                         condition_horizontal = 0
                 if spieler == -1:
-                    if Spielfeld().getSpielfeld()[len(Spielfeld().getSpielfeld()) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
+                    if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
                         win = "Spieler 1"
                         condition_horizontal += 1
                         if condition_horizontal >= 4:
@@ -142,9 +206,20 @@ class Gewinnabfrage(KI):
         return condition_horizontal
 
     def vertikaleAbfrage(self):
+        """ Vertikale Gewinnabfrage
+
+        Diese Methode überprüft, ob vier Werte des gleichen Spielers in
+        derselben Spalte direkt übereinander liegen.
+
+        Returns
+        -------
+        condition_vertikal : int
+            zählt die Anzahl der gleichen Spielerwerte übereinander mit
+        """
         global end
         global spieler
         global win
+        global spielfeld
         condition_vertikal = 0
         runde_spalte = 0
         while runde_spalte <= 6:
@@ -155,7 +230,7 @@ class Gewinnabfrage(KI):
                 zeilenzahl = 0 + runde_zeile
                 while zeilenzahl <= 5:
                     if spieler == 1:
-                        if Spielfeld().getSpielfeld()[len(Spielfeld().getSpielfeld()) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
+                        if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
                             win = "Spieler 2"
                             condition_vertikal += 1
                             if condition_vertikal >= 4:
@@ -167,7 +242,7 @@ class Gewinnabfrage(KI):
                                     zeilenzahl = -1
                             condition_vertikal = 0
                     if spieler == -1:
-                        if Spielfeld().getSpielfeld()[len(Spielfeld().getSpielfeld()) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
+                        if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
                             win = "Spieler 1"
                             condition_vertikal += 1
                             if condition_vertikal >= 4:
@@ -190,11 +265,23 @@ class Gewinnabfrage(KI):
         return condition_vertikal
 
     def diagonalRechtsAbfrage(self):
+        """ Gewinnabfrage diagonal rechts
+
+        Diese Methode überprüft, ob vier Werte des gleichen Spielers
+        diagonal nach rechts direkt aneinanderliegen.
+
+        Returns
+        -------
+        condition_diagonal_rechts : int
+            zählt die Anzahl der gleichen Spielerwerte diagonal nach rechts
+            mit
+        """
         condition_diagonal_rechts = 0
         runde_zeile = 0
         global end
         global spieler
         global win
+        global spielfeld
         while runde_zeile <= 6:
             runde_spalte = 0
             condition_diagonal_rechts = 0
@@ -203,7 +290,7 @@ class Gewinnabfrage(KI):
                 zeilenzahl = runde_zeile + 0
                 while zeilenzahl <= 5:
                     if spieler == 1:
-                        if Spielfeld().getSpielfeld()[len(Spielfeld().getSpielfeld()) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
+                        if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
                             win = "Spieler 2"
                             condition_diagonal_rechts += 1
                             if condition_diagonal_rechts >= 4:
@@ -213,7 +300,7 @@ class Gewinnabfrage(KI):
                                 break
                             condition_diagonal_rechts = 0
                     if spieler == -1:
-                        if Spielfeld().getSpielfeld()[len(Spielfeld().getSpielfeld()) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
+                        if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
                             win = "Spieler 1"
                             condition_diagonal_rechts += 1
                             if condition_diagonal_rechts >= 4:
@@ -237,9 +324,21 @@ class Gewinnabfrage(KI):
         return condition_diagonal_rechts
 
     def diagonalLinksAbfrage(self):
+        """ Gewinnabfrage diagonal links
+
+        Diese Methode überprüft, ob vier Werte des gleichen Spielers
+        diagonal nach links direkt aneinanderliegen.
+
+        Returns
+        -------
+        condition_diagonal_links : int
+            zählt die Anzahl der gleichen Spielerwerte diagonal nach
+            links mit
+        """
         global end
         global spieler
         global win
+        global spielfeld
         condition_diagonal_links = 0
         runde_zeile = 0
         while runde_zeile <= 6:
@@ -250,7 +349,7 @@ class Gewinnabfrage(KI):
                 zeilenzahl = 0 + runde_zeile
                 while zeilenzahl <= 5:
                     if spieler == 1:
-                        if Spielfeld().getSpielfeld()[len(Spielfeld().getSpielfeld()) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
+                        if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
                             win = "Spieler 2"
                             condition_diagonal_links += 1
                             if condition_diagonal_links >= 4:
@@ -260,7 +359,7 @@ class Gewinnabfrage(KI):
                             if spaltenzahl == 0:
                                 break
                     if spieler == -1:
-                        if Spielfeld().getSpielfeld()[len(Spielfeld().getSpielfeld()) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
+                        if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
                             win = "Spieler 1"
                             condition_diagonal_links += 1
                             if condition_diagonal_links >= 4:
@@ -286,13 +385,20 @@ class Gewinnabfrage(KI):
 class Spielablauf(Gewinnabfrage):
 
     def spielRunden(self):
+        """ Spielablauf
+
+        Diese Methode erzeugt den Spielablauf und ruft die Gewinnabfragen
+        auf. Bei einem Sieg wird am Bildschirm ausgegeben, wer gewonnen
+        hat. Ein Unentschieden wird auch berücksichtigt.
+        """
         global end
         global win
         global pseudo_runde
         global fehler
+        global runden_zaehler
         while end != True:
             if runden_zaehler == 0 and pseudo_runde == 0:
-                self.kiAbfrage()
+                KI().kiAbfrage(input("Möchten Sie gegen eine künstliche Intelligenz spielen?"))
 
             self.printSpielfeld()
             if (ki and spieler == 1) or ki == False:
@@ -302,10 +408,10 @@ class Spielablauf(Gewinnabfrage):
 
 
             if ki and spieler == -1:
-                KI().kiZug()
+                KI().kiZug(1.5)
             else:
                 Spieler().spielerAusgabe()
-                Spielfeld().setSpielfeld()
+                Spielfeld().setSpielfeld(input("Bitte wählen Sie eine Spalte für den nächsten Spielzug aus (1-7)"))
                 if ki:
                     Spielfeld().printSpielfeld()
 
@@ -325,7 +431,7 @@ class Spielablauf(Gewinnabfrage):
             pseudo_runde += 1
             fehler = False
 
-            if Gewinnabfrage().getRunde() == 42 and win == 'Niemand':
+            if runden_zaehler == 42 and win == 'Niemand':
                 end = True
                 win = "Unentschieden, niemand"
 
