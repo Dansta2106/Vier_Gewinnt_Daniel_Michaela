@@ -81,11 +81,11 @@ class Spielfeld(Spieler):
         global spielfeld
         try:
             eingabe = int(eingabe_start)
-            # Es wird geprüft ob es ein freies Feld in der angegebenen Reihe gibt
-            # Sollte das der Fall sein wird dieses Feld mit dem Spielerwert besetzt
-            # Wenn eine falsche Eingabe getätigt wird, wird die Variable fehler auf True geändert
+            # Es wird geprüft, ob es ein freies Feld in der angegebenen Reihe gibt
+            # Sollte das der Fall sein, wird dieses Feld mit dem Spielerwert besetzt
+            # Wenn eine falsche Eingabe getätigt wird, wird die Variable 'fehler' auf True geändert
             # um sicherzustellen, dass beispielsweise nicht der Spieler gewechselt wird, sondern
-            # der gleiche Spieler nochmal dran ist
+            # der gleiche Spieler nochmal an der Reihe ist
             if 1 <= eingabe <= 7 and spielfeld[0][eingabe - 1] == 0:
                 for reihe in spielfeld[::-1]:
                     if reihe[eingabe - 1] == 0:
@@ -190,7 +190,7 @@ class Gewinnabfrage(KI):
                     if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
                         win = "Spieler 2"
                         condition_horizontal += 1
-                        # Sollten mehrere gleiche Steine nebeneinander sein wird hier
+                        # Sollten mehrere gleiche Steine nebeneinander sein, wird hier
                         # die Variable 'condition_horizontal' jeweils um 1 erhöht
                         # sollte es irgendwann zu einer Unterbrechung der nebeneinander liegenden
                         # Steine kommen wird der Wert wieder auf 0 gesetzt um beim nächsten richtigen
@@ -210,11 +210,11 @@ class Gewinnabfrage(KI):
                             break
                     else:
                         condition_horizontal = 0
-                # 'spaltenzahl' wird um 1 erhöht um in der momentanen Liste einen Schritt nach rechts zu machen
+                # 'spaltenzahl' wird um 1 erhöht, um in der momentanen Liste einen Schritt nach rechts zu machen
                 spaltenzahl += 1
             if end:
                 break
-            # 'zeilenzahl' wird um 1 erhöht sobald 'spaltenzahl' den Wert 7 erreicht hat, um in die
+            # 'zeilenzahl' wird um 1 erhöht, sobald 'spaltenzahl' den Wert 7 erreicht hat, um in die
             # darüberliegende Zeile zu kommen und dort die horizontale Abfrage weiterzuführen
             zeilenzahl += 1
 
@@ -245,7 +245,7 @@ class Gewinnabfrage(KI):
                         if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
                             win = "Spieler 2"
                             condition_vertikal += 1
-                            # Sollten mehrere gleiche Steine übereinander sein wird hier
+                            # Sollten mehrere gleiche Steine übereinander sein, wird hier
                             # die Variable 'condition_vertikal' jeweils um 1 erhöht
                             # sollte es irgendwann zu einer Unterbrechung der übereinander liegenden
                             # Steine kommen wird der Wert wieder auf 0 gesetzt um beim nächsten richtigen
@@ -278,10 +278,10 @@ class Gewinnabfrage(KI):
                     # 'zeilenzahl' wird um 1 erhöht um einen Schritt nach oben zu machen
                     zeilenzahl += 1
                 condition_vertikal = 0
-                # 'runde_zeile' wird um 1 erhöht um beim nächsten Durchgang direkt in der nächsthöheren
+                # 'runde_zeile' wird um 1 erhöht, um beim nächsten Durchgang direkt in der nächsthöheren
                 # Zeile anzufangen
                 runde_zeile += 1
-            # 'runde_spalte' wird um 1 erhöht um beim nächsten Durchgang direkt in der nächsten Spalte anzufangen
+            # 'runde_spalte' wird um 1 erhöht, um beim nächsten Durchgang direkt in der nächsten Spalte anzufangen
             runde_spalte += 1
 
     def diagonalRechtsAbfrage(self):
@@ -303,7 +303,7 @@ class Gewinnabfrage(KI):
             while runde_spalte <= 5:
                 # durch die Variablen 'zeilenzahl' und 'spaltenzahl' kann auf jedes Element
                 # der Liste einzeln zugegriffen werden
-                # so wird von jeder Position die Diagonal nach rechts laufende Gewinnabfrage durchgeführt
+                # so wird von jeder Position die diagonal nach rechts laufende Gewinnabfrage durchgeführt
                 spaltenzahl = runde_spalte
                 zeilenzahl = runde_zeile
                 while zeilenzahl <= 5:
@@ -312,10 +312,10 @@ class Gewinnabfrage(KI):
                             win = "Spieler 2"
                             condition_diagonal_rechts += 1
                             # Sollten mehrere gleiche Steine in einer diagonalen Reihe
-                            # nach rechts oben sein wird hier
+                            # nach rechts oben sein, wird hier
                             # die Variable 'condition_diagonal_rechts' jeweils um 1 erhöht
                             # sollte es irgendwann zu einer Unterbrechung der in einer Reihe liegenden
-                            # Steine kommen wird der Wert wieder auf 0 gesetzt um beim nächsten richtigen
+                            # Steine kommen wird der Wert wieder auf 0 gesetzt, um beim nächsten richtigen
                             # Stein wieder bei 1 anzufangen
                             if condition_diagonal_rechts >= 4:
                                 end = True
@@ -341,12 +341,12 @@ class Gewinnabfrage(KI):
                     # um diagonal nach rechts oben zu springen
                     zeilenzahl += 1
                     spaltenzahl += 1
-                    # Falls 'spaltenzahl' über 5 hinaus wächst wird der Code abgebrochen da es keine weiteren Elemente
+                    # Falls 'spaltenzahl' über 5 hinaus wächst wird der Code abgebrochen, da es keine weiteren Elemente
                     # mehr gibt sollte man die Zahl weiter erhöhen
                     if spaltenzahl > 5:
                         break
                 condition_diagonal_rechts = 0
-                # 'runde_spalte' wird um 1 erhöht um beim nächsten Durchlauf in der nächsten Spalte zu beginnen
+                # 'runde_spalte' wird um 1 erhöht, um beim nächsten Durchlauf in der nächsten Spalte zu beginnen
                 runde_spalte += 1
             # 'runde_zeile' wird um 1 erhöht um beim nächsten Durchlauf in der nächsten Zeile zu beginnen
             runde_zeile += 1
@@ -424,8 +424,8 @@ class Spielablauf(Gewinnabfrage):
         """
         global end
         global win
-        # Variable pseudo_runde wurde nur erstellt um bei einem Fehler in der ersten Runde den runden_zaehler nicht zu
-        # stören. So wird die ki-Abfrage nur einmal getätigt
+        # Variable 'pseudo_runde' wurde nur erstellt, um bei einem Fehler in der ersten Runde den 'runden_zaehler'
+        # nicht zu stören. So wird die KI-Abfrage nur einmal getätigt
         global pseudo_runde
         global fehler
         global runden_zaehler
