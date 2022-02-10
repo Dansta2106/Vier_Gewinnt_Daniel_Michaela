@@ -40,7 +40,6 @@ class Spieler():
         return spieler
 
     def spielerAusgabe(self):
-        message = "Niemand ist dran"
         """Aktueller Spieler wird ausgegeben
 
         Diese Methode gibt den aktuellen Spieler
@@ -51,6 +50,7 @@ class Spieler():
         str
             String der angibt welcher Spieler am Zug ist
         """
+        message = "Niemand ist dran"
         if spieler == 1:
             if ki:
                 message = "Sie sind dran"
@@ -136,7 +136,7 @@ class KI(Spielfeld):
     def kiZug(self, sleep: float):
         """Die KI tätigt einen Zug
 
-        Diese Methode erezeugt eine Zufallszahl zwischen 1 und 7
+        Diese Methode erzeugt eine Zufallszahl zwischen 1 und 7
         und ruft dann die Methode setSpielfeld auf
 
         Parameters
