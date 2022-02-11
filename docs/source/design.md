@@ -62,6 +62,19 @@ beendet wird)</li>
 <li>"pseudo_runde" (wird gesetzt, damit nur einmal nach der KI gefragt wird)</li>
 </ul>
 
+## Gewinnabfrage
+Die Gewinnabfrage haben wir in 4 unterschiedliche Abfragen gegliedert:
+<ul>
+<li>Horizontale Abfrage</li>
+<li>Vertikale Abfrage</li>
+<li>Diagonal rechts Abfrage</li>
+<li>Diagonal links Abfrage</li>
+</ul>
+
+<p>Wir haben uns für diese Herangehensweise entschieden, da es für 
+uns übersichtlich erschien, auch wenn der Code dadurch länger wurde.
+</p>
+
 ## Conclusio
 Wir vermuten, dass wir den Code eher kompliziert umgesetzt haben, da
 wir anfänglich zu wenig Zeit in die Planung gesteckt haben. Wir hätten 
