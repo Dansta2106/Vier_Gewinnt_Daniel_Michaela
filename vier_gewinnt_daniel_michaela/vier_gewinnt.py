@@ -19,7 +19,7 @@ fehler = False
 ki = False
 pseudo_runde = 0
 
-class Spieler():
+class Spieler:
 
     def spielerWechsel(self):
         """Spieler wird gewechselt
@@ -62,7 +62,7 @@ class Spieler():
         return message
 
 
-class Spielfeld(Spieler):
+class Spielfeld:
 
     def setSpielfeld(self, eingabe_start: str):
         """Das Spielfeld wird mit Spielzügen erweitert
@@ -112,7 +112,7 @@ class Spielfeld(Spieler):
                 zeile_ausgabe += 1
 
 
-class KI(Spielfeld):
+class KI:
 
     def kiAbfrage(self, ki_abfrage: str):
         """KI als Gegner auswählen
@@ -148,11 +148,11 @@ class KI(Spielfeld):
         if ki and spieler == -1:
             time.sleep(sleep)
             random_number = str(random.randint(1, 7))
-            self.setSpielfeld(random_number)
+            Spielfeld().setSpielfeld(random_number)
             print(f'Die KI hat in der Spalte {random_number} gespielt')
 
 
-class Gewinnabfrage(KI):
+class Gewinnabfrage:
 
     def erhoeheRunde(self):
         """Rundenzähler
@@ -269,7 +269,7 @@ class Gewinnabfrage(KI):
                             if zeilenzahl == 7:
                                 spaltenzahl += 1
                                 if spaltenzahl != 7:
-                                    zeilenzahl = -1
+                                    zeilenzahl -= 1
                             condition_vertikal = 0
                     if end:
                         break
@@ -413,7 +413,7 @@ class Gewinnabfrage(KI):
             runde_zeile += 1
 
 
-class Spielablauf(Gewinnabfrage):
+class Spielablauf:
 
     def spielRunden(self):
         """Spielablauf
@@ -433,7 +433,7 @@ class Spielablauf(Gewinnabfrage):
             if runden_zaehler == 0 and pseudo_runde == 0:
                 KI().kiAbfrage(input("Möchten Sie gegen eine künstliche Intelligenz spielen?"))
 
-            self.printSpielfeld()
+            Spielfeld().printSpielfeld()
             if (ki and spieler == 1) or ki == False:
                 beenden = str(input("Wollen Sie das Spiel beenden?"))
                 if beenden == "Ja" or beenden == "J" or beenden == "j" or beenden == "ja" or beenden == "yes" or beenden == "Yes" or beenden == "y" or beenden == "Y":
@@ -454,7 +454,7 @@ class Spielablauf(Gewinnabfrage):
 
 
             if fehler == False:
-                self.erhoeheRunde()
+                Gewinnabfrage().erhoeheRunde()
 
             Gewinnabfrage().horizontaleAbfrage()
             Gewinnabfrage().vertikaleAbfrage()
@@ -471,7 +471,7 @@ class Spielablauf(Gewinnabfrage):
         if ki and win == "Spieler 2":
             win = "Die KI"
 
-        self.printSpielfeld()
+        Spielfeld().printSpielfeld()
 
         print(f'{win} hat gewonnen!')
         print("Danke für's Spielen!!")

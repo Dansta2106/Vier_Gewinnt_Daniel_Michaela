@@ -25,22 +25,22 @@ definieren.
 Die Klasse <b>"Spieler"</b> enthält die Methoden <i>"Spielerwechsel"</i> 
 und <i>"Spielerausgabe"</i>.
 
-### Klasse Spielfeld (abgeleitet von der Klasse Spieler)
+### Klasse Spielfeld
 Die Klasse <b>"Spielfeld"</b> beinhaltet die Methode <i>"setSpielfeld"</i>, 
 und <i>"printSpielfeld"</i>.
 
-### Klasse KI (abgeleitet von der Klasse Spielfeld)
+### Klasse KI
 In der Klasse <b>"KI"</b> ist die Methode <i>"ki_Abfrage"</i> und 
 <i>"ki_Zug"</i> zu finden.
 
-### Klasse Gewinnabfrage (abgeleitet von der Klasse KI)
+### Klasse Gewinnabfrage
 Die Klasse <b>Gewinnabfrage</b> beinhaltet die Methode <i>"erhoeheRunde"</i>, 
 <i>"horizontaleAbfrage"</i>, <i>"vertikaleAbfrage"</i>, 
 <i>"diagonalRechtsAbfrage"</i> und <i>"diagonalLinksAbfrage"</i>. 
 Hier wird überprüft, ob ein Spiel gewonnen wurde, um es anschließend 
 zu beenden.</p>
 
-### Klasse Spielablauf (abgeleitet von der Klasse Gewinnabfrage)
+### Klasse Spielablauf
 In der Klasse <b>Spielablauf</b> befindet sich die Methode 
 <i>spielRunden</i>. Die Methode ruft nicht nur die Gewinnabfragen auf,
 sondern fragt unter anderem auch ab, ob das Spiel unentschieden gespielt
@@ -65,5 +65,5 @@ beendet wird)</li>
 ## Conclusio
 Wir vermuten, dass wir den Code eher kompliziert umgesetzt haben, da
 wir anfänglich zu wenig Zeit in die Planung gesteckt haben. Wir hätten 
-die Herangehensweise anderer im Vorfeld genauer überprüfen müssen,
-um diese in unseren Code einfließen zu lassen.
+die Herangehensweise anderer im Vorfeld genauer studieren müssen,
+um daraus zu lernen und diese in unseren Code einfließen zu lassen.
