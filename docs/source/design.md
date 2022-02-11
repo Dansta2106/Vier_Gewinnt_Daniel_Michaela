@@ -26,15 +26,15 @@ Die Klasse <b>"Spieler"</b> enthält die Methoden <i>"Spielerwechsel"</i>
 und <i>"Spielerausgabe"</i>.
 
 ### Klasse Spielfeld
-Die Klasse <b>"Spielfeld"</b> beinhaltet die Methode <i>"setSpielfeld"</i>, 
+Die Klasse <b>"Spielfeld"</b> beinhaltet die Methoden <i>"setSpielfeld"</i>, 
 und <i>"printSpielfeld"</i>.
 
 ### Klasse KI
-In der Klasse <b>"KI"</b> ist die Methode <i>"ki_Abfrage"</i> und 
+In der Klasse <b>"KI"</b> sind die Methoden <i>"ki_Abfrage"</i> und 
 <i>"ki_Zug"</i> zu finden.
 
 ### Klasse Gewinnabfrage
-Die Klasse <b>Gewinnabfrage</b> beinhaltet die Methode <i>"erhoeheRunde"</i>, 
+Die Klasse <b>Gewinnabfrage</b> beinhaltet die Methoden <i>"erhoeheRunde"</i>, 
 <i>"horizontaleAbfrage"</i>, <i>"vertikaleAbfrage"</i>, 
 <i>"diagonalRechtsAbfrage"</i> und <i>"diagonalLinksAbfrage"</i>. 
 Hier wird überprüft, ob ein Spiel gewonnen wurde, um es anschließend 
