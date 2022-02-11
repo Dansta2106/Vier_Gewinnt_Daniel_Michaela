@@ -52,7 +52,7 @@ class Spielablauf:
 
 
             if fehler == False:
-                Gewinnabfrage().erhoeheRunde()
+                Runde().erhoeheRunde()
 
             self.end = self.feld.horizontaleAbfrage() or self.feld.vertikaleAbfrage() or self.feld.diagonalRechtsAbfrage() or self.feld.diagonalLinksAbfrage()
 
@@ -444,7 +444,7 @@ class KI(Spielablauf):
 
 
 
-class Gewinnabfrage:
+class Runde:
 
     def erhoeheRunde(self):
         """Rundenzähler
