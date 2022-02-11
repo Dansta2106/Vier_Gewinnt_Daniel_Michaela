@@ -1,23 +1,75 @@
 import random, time
 
-# Spielfeld wird als Listen in Listen erstellt
-zeile1 = [0, 0, 0, 0, 0, 0, 0]
-zeile2 = [0, 0, 0, 0, 0, 0, 0]
-zeile3 = [0, 0, 0, 0, 0, 0, 0]
-zeile4 = [0, 0, 0, 0, 0, 0, 0]
-zeile5 = [0, 0, 0, 0, 0, 0, 0]
-zeile6 = [0, 0, 0, 0, 0, 0, 0]
 
-# Das Spielfeld besteht aus 6 Zeilen und 7 Spalten
-spielfeld = [zeile1, zeile2, zeile3, zeile4, zeile5, zeile6]
 
 spieler = 1
 runden_zaehler = 0
-end = False
 win = "Niemand"
 fehler = False
 ki = False
-pseudo_runde = 0
+
+class Spielablauf:
+
+    def __init__(self):
+        self.feld = Spielfeld()
+        self.end = False
+
+    def spielRunden(self):
+        """Spielablauf
+
+        Diese Methode erzeugt den Spielablauf und ruft die Gewinnabfragen
+        auf. Bei einem Sieg wird am Bildschirm ausgegeben, wer gewonnen
+        hat. Ein Unentschieden wird auch berücksichtigt.
+        """
+        global win
+        # Variable 'pseudo_runde' wurde nur erstellt, um bei einem Fehler in der ersten Runde den 'runden_zaehler'
+        # nicht zu stören. So wird die KI-Abfrage nur einmal getätigt
+        global fehler
+        global runden_zaehler
+        pseudo_runde = 0
+        while self.end != True:
+            if runden_zaehler == 0 and pseudo_runde == 0:
+                KI().kiAbfrage(input("Möchten Sie gegen eine künstliche Intelligenz spielen?"))
+
+            self.feld.printSpielfeld()
+            if (ki and spieler == 1) or ki == False:
+                beenden = str(input("Wollen Sie das Spiel beenden?"))
+                if beenden == "Ja" or beenden == "J" or beenden == "j" or beenden == "ja" or beenden == "yes" or beenden == "Yes" or beenden == "y" or beenden == "Y":
+                    break
+
+
+            if ki and spieler == -1:
+                KI().kiZug(1.5)
+            else:
+                Spieler().spielerAusgabe()
+                self.feld.setSpielfeld(input("Bitte wählen Sie eine Spalte für den nächsten Spielzug aus (1-7)"))
+                if ki:
+                    self.feld.printSpielfeld()
+
+            if fehler == False:
+                Spieler().spielerWechsel()
+
+
+
+            if fehler == False:
+                Gewinnabfrage().erhoeheRunde()
+
+            self.end = self.feld.horizontaleAbfrage() or self.feld.vertikaleAbfrage() or self.feld.diagonalRechtsAbfrage() or self.feld.diagonalLinksAbfrage()
+
+            pseudo_runde += 1
+            fehler = False
+
+            if runden_zaehler == 42 and win == 'Niemand':
+                self.end = True
+                win = "Unentschieden, niemand"
+
+        if ki and win == "Spieler 2":
+            win = "Die KI"
+
+        self.feld.printSpielfeld()
+
+        print(f'{win} hat gewonnen!')
+        print("Danke für's Spielen!!")
 
 class Spieler:
 
@@ -64,6 +116,19 @@ class Spieler:
 
 class Spielfeld:
 
+    def __init__(self):
+        # Spielfeld wird als Listen in Listen erstellt
+        zeile1 = [0, 0, 0, 0, 0, 0, 0]
+        zeile2 = [0, 0, 0, 0, 0, 0, 0]
+        zeile3 = [0, 0, 0, 0, 0, 0, 0]
+        zeile4 = [0, 0, 0, 0, 0, 0, 0]
+        zeile5 = [0, 0, 0, 0, 0, 0, 0]
+        zeile6 = [0, 0, 0, 0, 0, 0, 0]
+
+        # Das Spielfeld besteht aus 6 Zeilen und 7 Spalten
+        self.spielfeld = [zeile1, zeile2, zeile3, zeile4, zeile5, zeile6]
+
+
     def setSpielfeld(self, eingabe_start: str):
         """Das Spielfeld wird mit Spielzügen erweitert
 
@@ -78,7 +143,6 @@ class Spielfeld:
             Spielerwert wird in Spalte 'eingabe_start' gesetzt
         """
         global fehler
-        global spielfeld
         try:
             eingabe = int(eingabe_start)
             # Es wird geprüft, ob es ein freies Feld in der angegebenen Reihe gibt
@@ -86,8 +150,8 @@ class Spielfeld:
             # Wenn eine falsche Eingabe getätigt wird, wird die Variable 'fehler' auf True geändert
             # um sicherzustellen, dass beispielsweise nicht der Spieler gewechselt wird, sondern
             # der gleiche Spieler nochmal an der Reihe ist
-            if 1 <= eingabe <= 7 and spielfeld[0][eingabe - 1] == 0:
-                for reihe in spielfeld[::-1]:
+            if 1 <= eingabe <= 7 and self.spielfeld[0][eingabe - 1] == 0:
+                for reihe in self.spielfeld[::-1]:
                     if reihe[eingabe - 1] == 0:
                         reihe[eingabe - 1] = spieler
                         break
@@ -97,7 +161,6 @@ class Spielfeld:
         except ValueError:
             print("Fehler, falsche Eingabe")
             fehler = True
-            Spieler().spielerWechsel()
 
     def printSpielfeld(self):
         """Gibt Spielfeld aus
@@ -108,11 +171,239 @@ class Spielfeld:
         zeile_ausgabe = 0
         if (ki and spieler == 1 and fehler == False) or ki == False:
             while zeile_ausgabe < 6:
-                print(spielfeld[zeile_ausgabe])
+                print(self.spielfeld[zeile_ausgabe])
                 zeile_ausgabe += 1
 
+    def horizontaleAbfrage(self):
+        """Horizontale Gewinnabfrage
 
-class KI:
+        Diese Methode überprüft, ob vier Werte des gleichen Spielers in
+        derselben Zeile direkt nebeneinander liegen.
+        """
+        global spieler
+        global win
+        zeilenzahl = 0
+        while zeilenzahl <= 5:
+            condition_horizontal = 0
+            spaltenzahl = 0
+            # durch die Variablen 'zeilenzahl' und 'spaltenzahl' kann auf jedes Element
+            # der Liste einzeln zugegriffen werden
+            # so wird von jeder Position die Horizontale Gewinnabfrage durchgeführt
+            while spaltenzahl <= 6:
+                if spieler == 1:
+                    if self.spielfeld[len(self.spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
+                        win = "Spieler 2"
+                        condition_horizontal += 1
+                        # Sollten mehrere gleiche Steine nebeneinander sein, wird hier
+                        # die Variable 'condition_horizontal' jeweils um 1 erhöht
+                        # sollte es irgendwann zu einer Unterbrechung der nebeneinander liegenden
+                        # Steine kommen wird der Wert wieder auf 0 gesetzt um beim nächsten richtigen
+                        # Stein wieder bei 1 anzufangen
+                        if condition_horizontal >= 4:
+                            return True
+                    else:
+                        condition_horizontal = 0
+                if spieler == -1:
+                    if self.spielfeld[len(self.spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
+                        win = "Spieler 1"
+                        condition_horizontal += 1
+                        if condition_horizontal >= 4:
+                            return True
+                    else:
+                        condition_horizontal = 0
+                # 'spaltenzahl' wird um 1 erhöht, um in der momentanen Liste einen Schritt nach rechts zu machen
+                spaltenzahl += 1
+            # 'zeilenzahl' wird um 1 erhöht, sobald 'spaltenzahl' den Wert 7 erreicht hat, um in die
+            # darüberliegende Zeile zu kommen und dort die horizontale Abfrage weiterzuführen
+            zeilenzahl += 1
+        return False
+
+
+    def vertikaleAbfrage(self):
+        """Vertikale Gewinnabfrage
+
+        Diese Methode überprüft, ob vier Werte des gleichen Spielers in
+        derselben Spalte direkt übereinander liegen.
+        """
+        global spieler
+        global win
+        # Die Variable 'runde_spalte' stellt sicher, dass zuerst aus jeder Position in der momentanen Spalte
+        # nach oben iteriert wird, bevor die Spalte gewechselt wird
+        runde_spalte = 0
+        while runde_spalte <= 6:
+            runde_zeile = 0
+            condition_vertikal = 0
+            while runde_zeile <= 5:
+                # durch die Variablen 'zeilenzahl' und 'spaltenzahl' kann auf jedes Element
+                # der Liste einzeln zugegriffen werden
+                # so wird von jeder Position die Vertikale Gewinnabfrage durchgeführt
+                spaltenzahl = runde_spalte
+                zeilenzahl = runde_zeile
+                while zeilenzahl <= 5:
+                    if spieler == 1:
+                        if self.spielfeld[len(self.spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
+                            win = "Spieler 2"
+                            condition_vertikal += 1
+                            # Sollten mehrere gleiche Steine übereinander sein, wird hier
+                            # die Variable 'condition_vertikal' jeweils um 1 erhöht
+                            # sollte es irgendwann zu einer Unterbrechung der übereinander liegenden
+                            # Steine kommen wird der Wert wieder auf 0 gesetzt um beim nächsten richtigen
+                            # Stein wieder bei 1 anzufangen
+                            if condition_vertikal >= 4:
+                                return True
+                        else:
+                            if zeilenzahl == 7:
+                                spaltenzahl += 1
+                                if spaltenzahl != 7:
+                                    zeilenzahl = -1
+                            condition_vertikal = 0
+                    if spieler == -1:
+                        if self.spielfeld[len(self.spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
+                            win = "Spieler 1"
+                            condition_vertikal += 1
+                            if condition_vertikal >= 4:
+                                return True
+                        else:
+                            if zeilenzahl == 7:
+                                spaltenzahl += 1
+                                if spaltenzahl != 7:
+                                    zeilenzahl = -1
+                            condition_vertikal = 0
+                    # 'zeilenzahl' wird um 1 erhöht um einen Schritt nach oben zu machen
+                    zeilenzahl += 1
+                condition_vertikal = 0
+                # 'runde_zeile' wird um 1 erhöht, um beim nächsten Durchgang direkt in der nächsthöheren
+                # Zeile anzufangen
+                runde_zeile += 1
+            # 'runde_spalte' wird um 1 erhöht, um beim nächsten Durchgang direkt in der nächsten Spalte anzufangen
+            runde_spalte += 1
+        return False
+
+    def diagonalRechtsAbfrage(self):
+        """Gewinnabfrage diagonal rechts
+
+        Diese Methode überprüft, ob vier Werte des gleichen Spielers
+        diagonal nach rechts direkt aneinanderliegen.
+        """
+        # Die Variable 'runde_zeile' stellt sicher, dass zuerst aus jeder Position in der momentanen Zeile
+        # nach rechts oben iteriert wird, bevor die Zeile gewechselt wird
+        runde_zeile = 0
+        global spieler
+        global win
+        while runde_zeile <= 6:
+            runde_spalte = 0
+            condition_diagonal_rechts = 0
+            while runde_spalte <= 5:
+                # durch die Variablen 'zeilenzahl' und 'spaltenzahl' kann auf jedes Element
+                # der Liste einzeln zugegriffen werden
+                # so wird von jeder Position die diagonal nach rechts laufende Gewinnabfrage durchgeführt
+                spaltenzahl = runde_spalte
+                zeilenzahl = runde_zeile
+                while zeilenzahl <= 5:
+                    if spieler == 1:
+                        if self.spielfeld[len(self.spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
+                            win = "Spieler 2"
+                            condition_diagonal_rechts += 1
+                            # Sollten mehrere gleiche Steine in einer diagonalen Reihe
+                            # nach rechts oben sein, wird hier
+                            # die Variable 'condition_diagonal_rechts' jeweils um 1 erhöht
+                            # sollte es irgendwann zu einer Unterbrechung der in einer Reihe liegenden
+                            # Steine kommen wird der Wert wieder auf 0 gesetzt, um beim nächsten richtigen
+                            # Stein wieder bei 1 anzufangen
+                            if condition_diagonal_rechts >= 4:
+                                return True
+                        else:
+                            if spaltenzahl == 7:
+                                break
+                            condition_diagonal_rechts = 0
+                    if spieler == -1:
+                        if self.spielfeld[len(self.spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
+                            win = "Spieler 1"
+                            condition_diagonal_rechts += 1
+                            if condition_diagonal_rechts >= 4:
+                                return True
+                        else:
+                            if spaltenzahl == 7:
+                                break
+                            condition_diagonal_rechts = 0
+                    # 'zeilenzahl' und 'spaltenzahl wird um 1 erhöht
+                    # um diagonal nach rechts oben zu springen
+                    zeilenzahl += 1
+                    spaltenzahl += 1
+                    # Falls 'spaltenzahl' über 5 hinaus wächst wird der Code abgebrochen, da es keine weiteren Elemente
+                    # mehr gibt sollte man die Zahl weiter erhöhen
+                    if spaltenzahl > 5:
+                        break
+                condition_diagonal_rechts = 0
+                # 'runde_spalte' wird um 1 erhöht, um beim nächsten Durchlauf in der nächsten Spalte zu beginnen
+                runde_spalte += 1
+            # 'runde_zeile' wird um 1 erhöht um beim nächsten Durchlauf in der nächsten Zeile zu beginnen
+            runde_zeile += 1
+        return False
+
+
+
+    def diagonalLinksAbfrage(self):
+        """Gewinnabfrage diagonal links
+
+        Diese Methode überprüft, ob vier Werte des gleichen Spielers
+        diagonal nach links direkt aneinanderliegen.
+        """
+        global spieler
+        global win
+        # Die Variable 'runde_zeile' stellt sicher, dass zuerst aus jeder Position in der momentanen Zeile
+        # nach rechts oben iteriert wird, bevor die Zeile gewechselt wird
+        runde_zeile = 0
+        while runde_zeile <= 6:
+            runde_spalte = 0
+            condition_diagonal_links = 0
+            while runde_spalte <= 5:
+                spaltenzahl = 6 - runde_spalte
+                zeilenzahl = 0 + runde_zeile
+                while zeilenzahl <= 5:
+                    if spieler == 1:
+                        if self.spielfeld[len(self.spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
+                            win = "Spieler 2"
+                            condition_diagonal_links += 1
+                            # Sollten mehrere gleiche Steine in einer diagonalen Reihe
+                            # nach links oben sein wird hier
+                            # die Variable 'condition_diagonal_links' jeweils um 1 erhöht
+                            # sollte es irgendwann zu einer Unterbrechung der in einer Reihe liegenden
+                            # Steine kommen wird der Wert wieder auf 0 gesetzt um beim nächsten richtigen
+                            # Stein wieder bei 1 anzufangen
+                            if condition_diagonal_links >= 4:
+                                return True
+                        else:
+                            condition_diagonal_links = 0
+                            if spaltenzahl == 0:
+                                break
+                    if spieler == -1:
+                        if self.spielfeld[len(self.spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
+                            win = "Spieler 1"
+                            condition_diagonal_links += 1
+                            if condition_diagonal_links >= 4:
+                                return True
+                        else:
+                            condition_diagonal_links = 0
+                            if spaltenzahl == 0:
+                                break
+                    # 'zeilenzahl' wird um 1 erhöht und 'spaltenzahl' wird um 1 verkleinert
+                    # um diagonal nach links oben zu springen
+                    zeilenzahl += 1
+                    spaltenzahl -= 1
+                condition_diagonal_links = 0
+                # 'runde_spalte' wird um 1 erhöht um im nächsten Durchgang in der nächsten Spalte zu beginnen
+                runde_spalte += 1
+
+            # 'runde_zeile' wird um 1 erhöht um im nächsten Durchgang in der nächsten Zeile zu beginnen
+            runde_zeile += 1
+        return False
+
+
+
+
+class KI(Spielablauf):
+
 
     def kiAbfrage(self, ki_abfrage: str):
         """KI als Gegner auswählen
@@ -148,8 +439,9 @@ class KI:
         if ki and spieler == -1:
             time.sleep(sleep)
             random_number = str(random.randint(1, 7))
-            Spielfeld().setSpielfeld(random_number)
+            self.feld.setSpielfeld(random_number)
             print(f'Die KI hat in der Spalte {random_number} gespielt')
+
 
 
 class Gewinnabfrage:
@@ -168,313 +460,8 @@ class Gewinnabfrage:
         runden_zaehler += 1
         return runden_zaehler
 
-    def horizontaleAbfrage(self):
-        """Horizontale Gewinnabfrage
-
-        Diese Methode überprüft, ob vier Werte des gleichen Spielers in
-        derselben Zeile direkt nebeneinander liegen.
-        """
-        global spieler
-        global end
-        global win
-        global spielfeld
-        zeilenzahl = 0
-        while zeilenzahl <= 5:
-            condition_horizontal = 0
-            spaltenzahl = 0
-            # durch die Variablen 'zeilenzahl' und 'spaltenzahl' kann auf jedes Element
-            # der Liste einzeln zugegriffen werden
-            # so wird von jeder Position die Horizontale Gewinnabfrage durchgeführt
-            while spaltenzahl <= 6:
-                if spieler == 1:
-                    if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
-                        win = "Spieler 2"
-                        condition_horizontal += 1
-                        # Sollten mehrere gleiche Steine nebeneinander sein, wird hier
-                        # die Variable 'condition_horizontal' jeweils um 1 erhöht
-                        # sollte es irgendwann zu einer Unterbrechung der nebeneinander liegenden
-                        # Steine kommen wird der Wert wieder auf 0 gesetzt um beim nächsten richtigen
-                        # Stein wieder bei 1 anzufangen
-                        if condition_horizontal >= 4:
-                            end = True
-                            break
-                    else:
-                        condition_horizontal = 0
-                if spieler == -1:
-                    if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
-                        win = "Spieler 1"
-                        condition_horizontal += 1
-                        if condition_horizontal >= 4:
-                            end = True
-                            print("horizontal")
-                            break
-                    else:
-                        condition_horizontal = 0
-                # 'spaltenzahl' wird um 1 erhöht, um in der momentanen Liste einen Schritt nach rechts zu machen
-                spaltenzahl += 1
-            if end:
-                break
-            # 'zeilenzahl' wird um 1 erhöht, sobald 'spaltenzahl' den Wert 7 erreicht hat, um in die
-            # darüberliegende Zeile zu kommen und dort die horizontale Abfrage weiterzuführen
-            zeilenzahl += 1
-
-    def vertikaleAbfrage(self):
-        """Vertikale Gewinnabfrage
-
-        Diese Methode überprüft, ob vier Werte des gleichen Spielers in
-        derselben Spalte direkt übereinander liegen.
-        """
-        global end
-        global spieler
-        global win
-        global spielfeld
-        # Die Variable 'runde_spalte' stellt sicher, dass zuerst aus jeder Position in der momentanen Spalte
-        # nach oben iteriert wird, bevor die Spalte gewechselt wird
-        runde_spalte = 0
-        while runde_spalte <= 6:
-            runde_zeile = 0
-            condition_vertikal = 0
-            while runde_zeile <= 5:
-                # durch die Variablen 'zeilenzahl' und 'spaltenzahl' kann auf jedes Element
-                # der Liste einzeln zugegriffen werden
-                # so wird von jeder Position die Vertikale Gewinnabfrage durchgeführt
-                spaltenzahl = runde_spalte
-                zeilenzahl = runde_zeile
-                while zeilenzahl <= 5:
-                    if spieler == 1:
-                        if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
-                            win = "Spieler 2"
-                            condition_vertikal += 1
-                            # Sollten mehrere gleiche Steine übereinander sein, wird hier
-                            # die Variable 'condition_vertikal' jeweils um 1 erhöht
-                            # sollte es irgendwann zu einer Unterbrechung der übereinander liegenden
-                            # Steine kommen wird der Wert wieder auf 0 gesetzt um beim nächsten richtigen
-                            # Stein wieder bei 1 anzufangen
-                            if condition_vertikal >= 4:
-                                end = True
-                        else:
-                            if zeilenzahl == 7:
-                                spaltenzahl += 1
-                                if spaltenzahl != 7:
-                                    zeilenzahl = -1
-                            condition_vertikal = 0
-                    if spieler == -1:
-                        if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
-                            win = "Spieler 1"
-                            condition_vertikal += 1
-                            if condition_vertikal >= 4:
-                                end = True
-                                print("Vertikal")
-                        else:
-                            if zeilenzahl == 7:
-                                spaltenzahl += 1
-                                if spaltenzahl != 7:
-                                    zeilenzahl -= 1
-                            condition_vertikal = 0
-                    if end:
-                        break
-                    else:
-                        win = "Niemand"
-                    # 'zeilenzahl' wird um 1 erhöht um einen Schritt nach oben zu machen
-                    zeilenzahl += 1
-                condition_vertikal = 0
-                # 'runde_zeile' wird um 1 erhöht, um beim nächsten Durchgang direkt in der nächsthöheren
-                # Zeile anzufangen
-                runde_zeile += 1
-            # 'runde_spalte' wird um 1 erhöht, um beim nächsten Durchgang direkt in der nächsten Spalte anzufangen
-            runde_spalte += 1
-
-    def diagonalRechtsAbfrage(self):
-        """Gewinnabfrage diagonal rechts
-
-        Diese Methode überprüft, ob vier Werte des gleichen Spielers
-        diagonal nach rechts direkt aneinanderliegen.
-        """
-        # Die Variable 'runde_zeile' stellt sicher, dass zuerst aus jeder Position in der momentanen Zeile
-        # nach rechts oben iteriert wird, bevor die Zeile gewechselt wird
-        runde_zeile = 0
-        global end
-        global spieler
-        global win
-        global spielfeld
-        while runde_zeile <= 6:
-            runde_spalte = 0
-            condition_diagonal_rechts = 0
-            while runde_spalte <= 5:
-                # durch die Variablen 'zeilenzahl' und 'spaltenzahl' kann auf jedes Element
-                # der Liste einzeln zugegriffen werden
-                # so wird von jeder Position die diagonal nach rechts laufende Gewinnabfrage durchgeführt
-                spaltenzahl = runde_spalte
-                zeilenzahl = runde_zeile
-                while zeilenzahl <= 5:
-                    if spieler == 1:
-                        if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
-                            win = "Spieler 2"
-                            condition_diagonal_rechts += 1
-                            # Sollten mehrere gleiche Steine in einer diagonalen Reihe
-                            # nach rechts oben sein, wird hier
-                            # die Variable 'condition_diagonal_rechts' jeweils um 1 erhöht
-                            # sollte es irgendwann zu einer Unterbrechung der in einer Reihe liegenden
-                            # Steine kommen wird der Wert wieder auf 0 gesetzt, um beim nächsten richtigen
-                            # Stein wieder bei 1 anzufangen
-                            if condition_diagonal_rechts >= 4:
-                                end = True
-                        else:
-                            if spaltenzahl == 7:
-                                break
-                            condition_diagonal_rechts = 0
-                    if spieler == -1:
-                        if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
-                            win = "Spieler 1"
-                            condition_diagonal_rechts += 1
-                            if condition_diagonal_rechts >= 4:
-                                end = True
-                        else:
-                            if spaltenzahl == 7:
-                                break
-                            condition_diagonal_rechts = 0
-                    if end:
-                        break
-                    else:
-                        win = "Niemand"
-                    # 'zeilenzahl' und 'spaltenzahl wird um 1 erhöht
-                    # um diagonal nach rechts oben zu springen
-                    zeilenzahl += 1
-                    spaltenzahl += 1
-                    # Falls 'spaltenzahl' über 5 hinaus wächst wird der Code abgebrochen, da es keine weiteren Elemente
-                    # mehr gibt sollte man die Zahl weiter erhöhen
-                    if spaltenzahl > 5:
-                        break
-                condition_diagonal_rechts = 0
-                # 'runde_spalte' wird um 1 erhöht, um beim nächsten Durchlauf in der nächsten Spalte zu beginnen
-                runde_spalte += 1
-            # 'runde_zeile' wird um 1 erhöht um beim nächsten Durchlauf in der nächsten Zeile zu beginnen
-            runde_zeile += 1
-
-    def diagonalLinksAbfrage(self):
-        """Gewinnabfrage diagonal links
-
-        Diese Methode überprüft, ob vier Werte des gleichen Spielers
-        diagonal nach links direkt aneinanderliegen.
-        """
-        global end
-        global spieler
-        global win
-        global spielfeld
-        # Die Variable 'runde_zeile' stellt sicher, dass zuerst aus jeder Position in der momentanen Zeile
-        # nach rechts oben iteriert wird, bevor die Zeile gewechselt wird
-        runde_zeile = 0
-        while runde_zeile <= 6:
-            runde_spalte = 0
-            condition_diagonal_links = 0
-            while runde_spalte <= 5:
-                spaltenzahl = 6 - runde_spalte
-                zeilenzahl = 0 + runde_zeile
-                while zeilenzahl <= 5:
-                    if spieler == 1:
-                        if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler - 2:
-                            win = "Spieler 2"
-                            condition_diagonal_links += 1
-                            # Sollten mehrere gleiche Steine in einer diagonalen Reihe
-                            # nach links oben sein wird hier
-                            # die Variable 'condition_diagonal_links' jeweils um 1 erhöht
-                            # sollte es irgendwann zu einer Unterbrechung der in einer Reihe liegenden
-                            # Steine kommen wird der Wert wieder auf 0 gesetzt um beim nächsten richtigen
-                            # Stein wieder bei 1 anzufangen
-                            if condition_diagonal_links >= 4:
-                                end = True
-                        else:
-                            condition_diagonal_links = 0
-                            if spaltenzahl == 0:
-                                break
-                    if spieler == -1:
-                        if spielfeld[len(spielfeld) - 1 - zeilenzahl][spaltenzahl] == spieler + 2:
-                            win = "Spieler 1"
-                            condition_diagonal_links += 1
-                            if condition_diagonal_links >= 4:
-                                end = True
-                        else:
-                            condition_diagonal_links = 0
-                            if spaltenzahl == 0:
-                                break
-                    if end:
-                        break
-                    else:
-                        win = "Niemand"
-                    # 'zeilenzahl' wird um 1 erhöht und 'spaltenzahl' wird um 1 verkleinert
-                    # um diagonal nach links oben zu springen
-                    zeilenzahl += 1
-                    spaltenzahl -= 1
-                condition_diagonal_links = 0
-                # 'runde_spalte' wird um 1 erhöht um im nächsten Durchgang in der nächsten Spalte zu beginnen
-                runde_spalte += 1
-
-            # 'runde_zeile' wird um 1 erhöht um im nächsten Durchgang in der nächsten Zeile zu beginnen
-            runde_zeile += 1
 
 
-class Spielablauf:
-
-    def spielRunden(self):
-        """Spielablauf
-
-        Diese Methode erzeugt den Spielablauf und ruft die Gewinnabfragen
-        auf. Bei einem Sieg wird am Bildschirm ausgegeben, wer gewonnen
-        hat. Ein Unentschieden wird auch berücksichtigt.
-        """
-        global end
-        global win
-        # Variable 'pseudo_runde' wurde nur erstellt, um bei einem Fehler in der ersten Runde den 'runden_zaehler'
-        # nicht zu stören. So wird die KI-Abfrage nur einmal getätigt
-        global pseudo_runde
-        global fehler
-        global runden_zaehler
-        while end != True:
-            if runden_zaehler == 0 and pseudo_runde == 0:
-                KI().kiAbfrage(input("Möchten Sie gegen eine künstliche Intelligenz spielen?"))
-
-            Spielfeld().printSpielfeld()
-            if (ki and spieler == 1) or ki == False:
-                beenden = str(input("Wollen Sie das Spiel beenden?"))
-                if beenden == "Ja" or beenden == "J" or beenden == "j" or beenden == "ja" or beenden == "yes" or beenden == "Yes" or beenden == "y" or beenden == "Y":
-                    break
-
-
-            if ki and spieler == -1:
-                KI().kiZug(1.5)
-            else:
-                Spieler().spielerAusgabe()
-                Spielfeld().setSpielfeld(input("Bitte wählen Sie eine Spalte für den nächsten Spielzug aus (1-7)"))
-                if ki:
-                    Spielfeld().printSpielfeld()
-
-            if fehler == False:
-                Spieler().spielerWechsel()
-
-
-
-            if fehler == False:
-                Gewinnabfrage().erhoeheRunde()
-
-            Gewinnabfrage().horizontaleAbfrage()
-            Gewinnabfrage().vertikaleAbfrage()
-            Gewinnabfrage().diagonalRechtsAbfrage()
-            Gewinnabfrage().diagonalLinksAbfrage()
-
-            pseudo_runde += 1
-            fehler = False
-
-            if runden_zaehler == 42 and win == 'Niemand':
-                end = True
-                win = "Unentschieden, niemand"
-
-        if ki and win == "Spieler 2":
-            win = "Die KI"
-
-        Spielfeld().printSpielfeld()
-
-        print(f'{win} hat gewonnen!')
-        print("Danke für's Spielen!!")
 
 
 if __name__ == '__main__':
