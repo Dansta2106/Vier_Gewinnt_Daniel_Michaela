@@ -1,21 +1,21 @@
 import unittest
 
-from vier_gewinnt_daniel_michaela import vier_gewinnt
+from spiel import spiel
 
 
 class VierGewinntTestCases(unittest.TestCase):
     def setUp(self) -> None:
-        self.spieler = vier_gewinnt.spieler
-        self.feld = vier_gewinnt.Spielfeld()
-        self.end = vier_gewinnt.Spielablauf()
+        self.spieler = spiel.spieler
+        self.feld = spiel.Spielfeld()
+        self.end = spiel.Spielablauf()
 
-        self.spielerAusgabetest = vier_gewinnt.Spieler.spielerAusgabe(self.spieler)
+        self.spielerAusgabetest = spiel.Spieler.spielerAusgabe(self.spieler)
 
     def test_SpielerAusgabe(self):
         self.assertEqual(self.spielerAusgabetest, "Spieler 1 ist dran")
 
     def test_setSpielfeld(self):
-        vier_gewinnt.spieler = 1
+        spiel.spieler = 1
         self.feld.setSpielfeld('1')
         self.feld.setSpielfeld('1')
         self.feld.setSpielfeld('1')
@@ -24,7 +24,7 @@ class VierGewinntTestCases(unittest.TestCase):
         self.assertEqual(self.feld.spielfeld[4][0], 1)
         self.assertEqual(self.feld.spielfeld[3][0], 1)
         self.assertEqual(self.feld.spielfeld[2][0], 1)
-        vier_gewinnt.spieler = -1
+        spiel.spieler = -1
         self.feld.setSpielfeld('2')
         self.feld.setSpielfeld('2')
         self.feld.setSpielfeld('2')
@@ -41,7 +41,7 @@ class VierGewinntTestCases(unittest.TestCase):
         falsche_eingabe2 = "hallo"
         self.feld.setSpielfeld(falsche_eingabe)
         self.feld.setSpielfeld(falsche_eingabe2)
-        self.assertTrue(vier_gewinnt.fehler)
+        self.assertTrue(spiel.fehler)
 
 
     def test_vertikaleAbfrage_Spieler1(self):
@@ -89,7 +89,7 @@ class VierGewinntTestCases(unittest.TestCase):
         self.assertTrue(self.end)
 
     def test_vertikaleAbfrage_Spieler2(self):
-        vier_gewinnt.spieler = -1
+        spiel.spieler = -1
         self.feld.setSpielfeld('1')
         self.feld.setSpielfeld('1')
         self.feld.setSpielfeld('1')
@@ -98,7 +98,7 @@ class VierGewinntTestCases(unittest.TestCase):
         self.assertTrue(self.end)
 
     def test_horizontaleAbfrage_Spieler2(self):
-        vier_gewinnt.spieler = -1
+        spiel.spieler = -1
         self.feld.setSpielfeld("1")
         self.feld.setSpielfeld("2")
         self.feld.setSpielfeld("3")
@@ -107,7 +107,7 @@ class VierGewinntTestCases(unittest.TestCase):
         self.assertTrue(self.end)
 
     def test_diagonalRechtsAbfrage_Spieler2(self):
-        vier_gewinnt.spieler = -1
+        spiel.spieler = -1
         self.feld.setSpielfeld("1")
         self.feld.setSpielfeld("2")
         self.feld.setSpielfeld("2")
@@ -122,7 +122,7 @@ class VierGewinntTestCases(unittest.TestCase):
         self.assertTrue(self.end)
 
     def test_diagonalLinksAbfrage_Spieler2(self):
-        vier_gewinnt.spieler = -1
+        spiel.spieler = -1
         self.feld.setSpielfeld("7")
         self.feld.setSpielfeld("6")
         self.feld.setSpielfeld("6")
