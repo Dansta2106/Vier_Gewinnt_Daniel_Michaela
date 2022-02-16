@@ -15,7 +15,7 @@ class VierGewinntTestCases(unittest.TestCase):
         self.assertEqual(self.spielerAusgabetest, "Spieler 1 ist dran")
 
     def test_setSpielfeld(self):
-        self.feld.setSpielfeld('1')
+        vier_gewinnt.spieler = 1
         self.feld.setSpielfeld('1')
         self.feld.setSpielfeld('1')
         self.feld.setSpielfeld('1')
@@ -24,11 +24,24 @@ class VierGewinntTestCases(unittest.TestCase):
         self.assertEqual(self.feld.spielfeld[4][0], 1)
         self.assertEqual(self.feld.spielfeld[3][0], 1)
         self.assertEqual(self.feld.spielfeld[2][0], 1)
-        self.assertTrue(vier_gewinnt.fehler)
+        vier_gewinnt.spieler = -1
+        self.feld.setSpielfeld('2')
+        self.feld.setSpielfeld('2')
+        self.feld.setSpielfeld('2')
+        self.feld.setSpielfeld('2')
+        self.assertEqual(self.feld.spielfeld[5][1], -1)
+        self.assertEqual(self.feld.spielfeld[4][1], -1)
+        self.assertEqual(self.feld.spielfeld[3][1], -1)
+        self.assertEqual(self.feld.spielfeld[2][1], -1)
+
 
 
     def test_falscheEingabe(self):
-        pass
+        falsche_eingabe = str(8)
+        falsche_eingabe2 = "hallo"
+        self.feld.setSpielfeld(falsche_eingabe)
+        self.feld.setSpielfeld(falsche_eingabe2)
+        self.assertTrue(vier_gewinnt.fehler)
 
 
     def test_vertikaleAbfrage_Spieler1(self):
