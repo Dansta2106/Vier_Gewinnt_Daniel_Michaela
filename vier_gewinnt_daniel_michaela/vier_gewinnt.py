@@ -402,7 +402,9 @@ class Spielfeld:
 
 
 
-class KI(Spielablauf):
+class KI:
+    def __init__(self):
+        self.feld_ki = Spielfeld()
 
 
     def kiAbfrage(self, ki_abfrage: str):
@@ -439,7 +441,7 @@ class KI(Spielablauf):
         if ki and spieler == -1:
             time.sleep(sleep)
             random_number = str(random.randint(1, 7))
-            self.feld.setSpielfeld(random_number)
+            self.feld_ki.setSpielfeld(random_number)
             print(f'Die KI hat in der Spalte {random_number} gespielt')
 
 
