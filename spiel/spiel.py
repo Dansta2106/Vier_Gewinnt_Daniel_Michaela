@@ -397,6 +397,7 @@ class Spielfeld:
 
             # 'runde_zeile' wird um 1 erhöht um im nächsten Durchgang in der nächsten Zeile zu beginnen
             runde_zeile += 1
+        win = 'Niemand'
         return False
 
 class KI:
