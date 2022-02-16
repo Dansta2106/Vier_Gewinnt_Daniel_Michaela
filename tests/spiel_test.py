@@ -36,13 +36,15 @@ class VierGewinntTestCases(unittest.TestCase):
 
 
 
-    def test_falscheEingabe(self):
-        falsche_eingabe = str(8)
-        falsche_eingabe2 = "hallo"
-        self.feld.setSpielfeld(falsche_eingabe)
-        self.feld.setSpielfeld(falsche_eingabe2)
+    def test_falscheEingabe1(self):
+        falsche_eingabe1 = str(8)
+        self.feld.setSpielfeld(falsche_eingabe1)
         self.assertTrue(spiel.fehler)
 
+    def test_falscheEingabe2(self):
+        falsche_eingabe2 = "hallo"
+        self.feld.setSpielfeld(falsche_eingabe2)
+        self.assertTrue(spiel.fehler)
 
     def test_vertikaleAbfrage_Spieler1(self):
         self.feld.setSpielfeld('1')
