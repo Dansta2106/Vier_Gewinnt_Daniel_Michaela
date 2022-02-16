@@ -15,30 +15,31 @@ class VierGewinntTestCases(unittest.TestCase):
         self.assertEqual(self.spielerAusgabetest, "Spieler 1 ist dran")
 
     def test_setSpielfeld(self):
-        eingabe_start = str(1)
-        falsche_eingabe = str(8)
-        falsche_eingabe2 = "hallo"
-        self.feld.setSpielfeld(eingabe_start)
-        self.feld.setSpielfeld(eingabe_start)
-        self.feld.setSpielfeld(eingabe_start)
-        self.feld.setSpielfeld(eingabe_start)
-        self.feld.setSpielfeld(falsche_eingabe)
+        self.feld.setSpielfeld('1')
+        self.feld.setSpielfeld('1')
+        self.feld.setSpielfeld('1')
+        self.feld.setSpielfeld('1')
+        self.feld.setSpielfeld('1')
         self.assertEqual(self.feld.spielfeld[5][0], 1)
         self.assertEqual(self.feld.spielfeld[4][0], 1)
         self.assertEqual(self.feld.spielfeld[3][0], 1)
         self.assertEqual(self.feld.spielfeld[2][0], 1)
         self.assertTrue(vier_gewinnt.fehler)
 
-    def test_vertikaleAbfrage(self):
-        eingabe_start = str(1)
-        self.feld.setSpielfeld(eingabe_start)
-        self.feld.setSpielfeld(eingabe_start)
-        self.feld.setSpielfeld(eingabe_start)
-        self.feld.setSpielfeld(eingabe_start)
+
+    def test_falscheEingabe(self):
+        pass
+
+
+    def test_vertikaleAbfrage_Spieler1(self):
+        self.feld.setSpielfeld('1')
+        self.feld.setSpielfeld('1')
+        self.feld.setSpielfeld('1')
+        self.feld.setSpielfeld('1')
         self.feld.vertikaleAbfrage()
         self.assertTrue(self.end)
 
-    def test_horizontaleAbfrage(self):
+    def test_horizontaleAbfrage_Spieler1(self):
         self.feld.setSpielfeld("1")
         self.feld.setSpielfeld("2")
         self.feld.setSpielfeld("3")
@@ -46,7 +47,7 @@ class VierGewinntTestCases(unittest.TestCase):
         self.feld.horizontaleAbfrage()
         self.assertTrue(self.end)
 
-    def test_diagonalRechtsAbfrage(self):
+    def test_diagonalRechtsAbfrage_Spieler1(self):
         self.feld.setSpielfeld("1")
         self.feld.setSpielfeld("2")
         self.feld.setSpielfeld("2")
@@ -60,7 +61,7 @@ class VierGewinntTestCases(unittest.TestCase):
         self.feld.diagonalRechtsAbfrage()
         self.assertTrue(self.end)
 
-    def test_diagonalLinksAbfrage(self):
+    def test_diagonalLinksAbfrage_Spieler1(self):
         self.feld.setSpielfeld("7")
         self.feld.setSpielfeld("6")
         self.feld.setSpielfeld("6")
@@ -74,8 +75,53 @@ class VierGewinntTestCases(unittest.TestCase):
         self.feld.diagonalLinksAbfrage()
         self.assertTrue(self.end)
 
+    def test_vertikaleAbfrage_Spieler2(self):
+        vier_gewinnt.spieler = -1
+        self.feld.setSpielfeld('1')
+        self.feld.setSpielfeld('1')
+        self.feld.setSpielfeld('1')
+        self.feld.setSpielfeld('1')
+        self.feld.vertikaleAbfrage()
+        self.assertTrue(self.end)
 
+    def test_horizontaleAbfrage_Spieler2(self):
+        vier_gewinnt.spieler = -1
+        self.feld.setSpielfeld("1")
+        self.feld.setSpielfeld("2")
+        self.feld.setSpielfeld("3")
+        self.feld.setSpielfeld("4")
+        self.feld.horizontaleAbfrage()
+        self.assertTrue(self.end)
 
+    def test_diagonalRechtsAbfrage_Spieler2(self):
+        vier_gewinnt.spieler = -1
+        self.feld.setSpielfeld("1")
+        self.feld.setSpielfeld("2")
+        self.feld.setSpielfeld("2")
+        self.feld.setSpielfeld("3")
+        self.feld.setSpielfeld("3")
+        self.feld.setSpielfeld("3")
+        self.feld.setSpielfeld("4")
+        self.feld.setSpielfeld("4")
+        self.feld.setSpielfeld("4")
+        self.feld.setSpielfeld("4")
+        self.feld.diagonalRechtsAbfrage()
+        self.assertTrue(self.end)
+
+    def test_diagonalLinksAbfrage_Spieler2(self):
+        vier_gewinnt.spieler = -1
+        self.feld.setSpielfeld("7")
+        self.feld.setSpielfeld("6")
+        self.feld.setSpielfeld("6")
+        self.feld.setSpielfeld("5")
+        self.feld.setSpielfeld("5")
+        self.feld.setSpielfeld("5")
+        self.feld.setSpielfeld("4")
+        self.feld.setSpielfeld("4")
+        self.feld.setSpielfeld("4")
+        self.feld.setSpielfeld("4")
+        self.feld.diagonalLinksAbfrage()
+        self.assertTrue(self.end)
 
 if __name__ == '__main__':
     unittest.main()

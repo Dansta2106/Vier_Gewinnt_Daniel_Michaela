@@ -399,12 +399,9 @@ class Spielfeld:
             runde_zeile += 1
         return False
 
-
-
-
 class KI:
     def __init__(self):
-        self.feld_ki = Spielfeld()
+        self.feld = Spielfeld()
 
 
     def kiAbfrage(self, ki_abfrage: str):
@@ -441,9 +438,8 @@ class KI:
         if ki and spieler == -1:
             time.sleep(sleep)
             random_number = str(random.randint(1, 7))
-            self.feld_ki.setSpielfeld(random_number)
+            self.feld.setSpielfeld(random_number)
             print(f'Die KI hat in der Spalte {random_number} gespielt')
-
 
 
 class Runde:
