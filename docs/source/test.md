@@ -3,12 +3,12 @@ Die Aufgabenstellung bestand darin, die Spiellogik zu testen, nicht
 jedoch den Spielablauf und den Computergegner.
 
 ## Welche Bereiche wurden abgedeckt?
-Es wird getestet, ob es sich um gültige Züge handelt, also ob ein 
-Stein gespielt werden kann.
-<p>Es muss sich um eine Zahl zwischen 1 -7 handeln. Falls eine 
+Es wird getestet, ob es sich um gültige Züge für Spieler 1 und Spieler -1 
+handelt, also ob ein Stein gespielt werden kann.
+<p>Es muss sich um eine Zahl zwischen 1 - 7 handeln. Falls eine 
 Falscheingabe getätigt wird, oder eine Spalte bereits voll belegt ist, 
 wird derselbe Spieler erneut zum Spielzug aufgefordert.</p>
-<p>Darüberhinaus wird getestet, ob ein Spieler gewonnen hat.</p>
+<p>Darüberhinaus wird getestet, ob Spieler 1 oder -1 gewonnen hat.</p>
 <p>Dies wird überprüft, indem vier Steine vom gleichen Spieler 
 nacheinander gelegt werden. Dabei werden vier unterschiedliche 
 Richtungen abgefragt: horizontal, vertikal, diagonal links, diagonal
